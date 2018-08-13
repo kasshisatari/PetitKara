@@ -5,10 +5,14 @@ PetitKara
 # Feature(特徴)
 - Webで曲情報更新や履歴操作を含め、全操作が可能
 - FHDまでのH.264(.mp4)の動画再生
-# Restriction(制限)
+# Restriction(未対応機能)
 - 4K、H.265、XVID等、Raspberry Piが未対応である動画の再生
 - HDMI信号の切り替え
 - ピッチコントロール
+- 予約時コメント
+- 非公開予約
+- 流れるコメント
+- 字幕ファイル
 # Requirement(必要機材、S/W)
 - Raspberry Pi 3
 - Raspbian Stretch
