@@ -1,0 +1,167 @@
+= PetitKara環境の構築
+
+== 1. 目的
+
+PetitKaraの環境を構築する。
+
+== 2. 環境
+
+* Raspberry Pi 3
+* Raspbian Stretch
+Version::
+June 2018
+
+CAUTION: 環境構築時、有線LANアダプタにDHCPでインターネット接続可能なイーサネットケーブルを接続すること。
+
+== 3. hostapdインストール
+
+無線LANアクセスポイントデーモンのhostapdをインストール。
+
+----
+$ sudo apt-get update
+$ sudo apt-get install hostapd
+----
+
+== 4. /etc/dhcpcd.conf
+
+無線LANであるwlan0のIPアドレスを固定値に変更する。
+最終行に追記する。
+
+----
+interface wlan0
+static ip_address=192.168.9.1/24
+----
+
+<<<
+
+== 5. /etc/hostapd/hostapd.conf
+
+hostapd用のテンプレートを展開する。
+
+----
+$ cd /etc/hostapd/
+$ sudo cp /usr/share/doc/hostapd/examples/hostapd.conf.gz .
+$ sudo gzip -d hostapd.conf.gz
+----
+
+/etc/hostapd/hostapd.confを開き、ssidを設定する。
+
+----
+# This is the name of the network
+
+ssid=PetitKara
+----
+
+/etc/hostapd/hostapd.confを開き、パスフレーズを設定する。制約は8文字以上63文字以下。
+
+----
+# The network passphrase
+
+wpa_passphrase=12345678
+----
+
+/etc/hostapd/hostapd.confを開き、パスワード接続を有効にする。
+
+----
+wpa=2
+----
+
+== 6. /etc/init.d/hostapd
+
+confファイルを指定する。
+
+----
+DAEMON_CONF=/etc/hostapd/hostapd.conf
+----
+
+== 7. /etc/default/hostapd
+
+confファイルを指定する。
+
+----
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+----
+
+<<<
+
+== 8. dnsmasq
+
+クライアントにIPアドレスを割り当てるため、dnsmasqをインストールする。
+
+----
+$ sudo apt-get install dnsmasq
+----
+
+== 9. /etc/dnsmasq.conf
+
+割り当てるIPアドレスの範囲を指定する。
+最終行に追記する。
+
+----
+interface=wlan0
+domain-needed
+bogus-priv
+dhcp-range=192.168.9.50,192.168.9.150,12h
+----
+
+TIP: domain-neededはドメインの無いホスト名のみ問合せの場合、上位DNSサーバに転送しない
+
+TIP: bogus-privはプライベートIPアドレスの逆引きを上位DNSサーバに転送しない
+
+== 10. xscreensaver
+
+スクリーンセーバによる暗転を防ぐため、xscreensaverをインストールする。
+
+----
+$ sudo apt-get install xscreensaver
+----
+
+== 11. /home/pi/Desktop
+
+PetitKaraをデスクトップにコピーする。
+
+== 12. /home/pi/.config/lxsession/LXDE-pi/autostart
+
+電源起動によるスタートアップのため、最終行に追記する。
+
+----
+@sh /home/pi/Desktop/PetitKara/start.sh
+----
+
+== 13. /home/pi/Desktop/PetitKara/start.sh
+
+電源起動によるスタートアップのため、シェルスクリプトを作成する。
+
+----
+cd /home/pi/Desktop/PetitKara
+python Controller.py &
+chromium-browser http://localhost:8080/console &
+----
+
+== 14. /boot/config.txt
+
+HDMIケーブルの抜けによるHDMI信号の出力停止やサイズ誤認識を防ぐ。
+
+----
+hdmi_force_hotplug=1
+hdmi_group=1
+hdmi_mode=16
+----
+
+== 15. ntfs-3g
+
+2TB超えのHDDに対応するため、ntfs-3gをインストールする。
+
+----
+sudo aptitude install ntfs-3g
+----
+
+== 16. 再起動する
+
+スタートメニュー→「Shutdown ...」→「Reboot」
+
+== 17. スクリーンセーバを無効化する
+
+スタートメニュー→「Preferences」→「Screensavor」
+
+「Display Modes」タブにて、「Mode:」リストボックスを「Disable Screen Saver」に設定する。
