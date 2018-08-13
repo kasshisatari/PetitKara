@@ -9,17 +9,17 @@ PetitKara
 - 4K、H.265、XVID等、Raspberry Piが未対応である動画の再生
 - HDMI信号の切り替え
 - ピッチコントロール
-# Requirement
+# Requirement(必要機材、S/W)
 - Raspberry Pi 3
 - Raspbian Stretch
 - hostapd
 - dnsmasq
 - xscreensaver
 - ntfs-3g
-# Usage
+# Usage(使用方法)
 - Raspberry Pi 3に動画ファイルを格納したUSBデバイスを接続する。
 - QRコードが表示されたら、手持ちのスマホでQRコードを読み取り、操作画面を開く。
 - 「曲情報更新」を押下して、USBに接続されたデバイスから曲情報を取得する。
 - 参加者のH.N.でログインして予約操作や再生制御をする。
-# Install
+# Install(インストール方法)
 - INSTALL.pdfを参照。
