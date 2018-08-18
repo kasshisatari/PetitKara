@@ -206,14 +206,8 @@ def history():
 @app.get("/insert")
 def insert():
   fileId = request.query.get('fileId')
-  conn = sqlite3.connect('file.db')
-  c = conn.cursor()
-  c.execute("select DirName,FileName from File WHERE FileID = " + str(fileId))
-  row = c.fetchone()
-  dirName = row[0]
-  fileName = row[1]
+  dirName, fileName = File.Get(fileId)
   Book.AddTop(os.path.join(dirName,fileName),request.query.user,"comment",True,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
-  conn.close()
   return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
 
 @app.get("/playlist")
@@ -232,14 +226,8 @@ def reserve():
 @app.get("/add")
 def add():
   fileId = request.query.get('fileId')
-  conn = sqlite3.connect('file.db')
-  c = conn.cursor()
-  c.execute("select DirName,FileName from File WHERE FileID = " + str(fileId))
-  row = c.fetchone()
-  dirName = row[0]
-  fileName = row[1]
+  dirName, fileName = File.Get(fileId)
   Book.AddLast(os.path.join(dirName,fileName),request.query.user,"comment",True,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
-  conn.close()
   return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
 
 @app.get("/dummy")

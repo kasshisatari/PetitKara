@@ -28,17 +28,43 @@ import threading
 import sqlite3
 import os
 import VideoInfo
-fileName = "file.db"
-limit = 20
-lock = threading.Lock()
-conn = None
-c = None
+fileName = "file.db"    # DB File Name  
+limit = 20              # Max Search Record Per Page
+lock = threading.Lock() # Lock Object
+conn = None             # SQLite Connection
+c = None                # SQLite Cursor
 
-def recFiles(directories):
+# Get movie file path
+def recFiles(directories): # string for filepath
   for root, dirs, files in os.walk(directories):
     for file in files:
       if file[-4:] == ".avi" or file[-4:] == ".mp4":
         yield (file,root)
+
+# Get file information from FileID
+def Get(
+      fileId # Integer(In): FileID
+    ): # Tuple of (Directory Name, File Name)
+  global conn
+  global lock
+  global c
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+  # [[[ 2. Check DB File ]]]
+  if not os.path.exists("./" + fileName):
+    # < File not Exists >
+    lock.release()
+    return "","" 
+  # [[[ 3. Prepare SQLite ]]]
+  if conn is None:
+    conn = sqlite3.connect(fileName, check_same_thread=False)
+    c = conn.cursor()
+  # [[[ 4. Get Directory Name and File Name ]]]
+  c.execute("SELECT DirName, FileName FROM File WHERE FileID = " + str(fileId))
+  row = c.fetchone()
+  # [[[ 5. Unlock ]]]
+  lock.release()
+  return row[0],row[1]
 
 # Count hit number for keyword
 def Count(keywords): # string with <li></li> elements
@@ -169,7 +195,7 @@ def Detail(no,user): # string html
   return list
 
 # Delete DB
-def Delete():
+def Delete(): # None
   global conn
   # [[[ 1. Close DB ]]]
   if conn is not None:
@@ -179,7 +205,7 @@ def Delete():
     os.remove(fileName)
  
 # Initialize DB
-def init():
+def init(): # None
   global lock
   global conn
   global c

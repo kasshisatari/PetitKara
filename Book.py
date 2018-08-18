@@ -273,11 +273,11 @@ def Swap(
   if srcBookId == dstBookId:
     return False
 
-  # [[[ 0. Lock ]]]
+  # [[[ 2. Lock ]]]
   lock.acquire()
   c.execute("begin")
 
-  # [[[ 1. Check BookId ]]]
+  # [[[ 3. Check BookId ]]]
   c.execute("select Idx from Book " +
     "where BookId = " + str(srcBookId))
   srcIdx = c.fetchone()
@@ -295,7 +295,7 @@ def Swap(
   srcIdx = srcIdx[0]
   dstIdx = dstIdx[0]
 
-  # [[[ 2. Update Idx ]]]
+  # [[[ 4. Update Idx ]]]
   c.execute("update Book " +
     "set Idx = " + str(-1) + " " +
     "where BookId = " + str(dstBookId))
@@ -306,15 +306,20 @@ def Swap(
     "set Idx = " + str(srcIdx) + " " +
     "where BookId = " + str(dstBookId))
  
-  # [[[ 3. UnLock ]]]
+  # [[[ 5. UnLock ]]]
   conn.commit()
   lock.release()
 
   return True
 
 # Get Playlist Tags
-def Playlist(user):
-  list = ''
+def Playlist(
+      user # String(In): User Name
+    ): # String with HTML
+  # [[[ 1. Initialize Book List ]]]
+  list = '' # Book List
+
+  # [[[ 2. Add Book List URLs ]]]
   for row in List():
     list = list + \
       "<li><a href=\"reserve?user=" + \
@@ -324,21 +329,39 @@ def Playlist(user):
       "\" rel=\"external\">" + \
       os.path.basename(row[2]) + \
       "</a></li>"
+
+  # [[[ 3. Return Book List URLs ]]]
   return list
 
 # Get Total Reserve Time
-def GetTotalReserveTime():
-  ms = 0 # [10ms]
+def GetTotalReserveTime(): # String of (%HH:%MM:%SS.%10MS)
+  # [[[ 1. Initialize Reserve Time ]]]
+  ms = 0 # [ Reserve Time by 10ms]
+
+  # [[[ 2. Sum Reserve Time with 10ms ]]]
   for row in List():
+    # [[ 2.1. Split Delimiter ]]
     val = re.split('[:.]',row[6])
+    # [[ 2.2. Add Hour ]]
     ms += int(val[0])*100*60*60
+    # [[ 2.3. Add Minute ]]
     ms += int(val[1])*100*60
+    # [[ 2.4. Add Second ]]
     ms += int(val[2])*100
+    # [[ 2.5. Add 10 mili-Second ]]
     ms += int(val[3])
+
+  # [[[ 3. Pretty Print for %HH:%MM:%SS.%10MS ]]]
+  # [[ 3.1. Hour ]]
   hour = int(ms/(100*60*60))
+  # [[ 3.2. Minute ]]
   minute = int(ms%(100*60*60)/(100*60))
+  # [[ 3.3. Second ]]
   second = int(ms%(100*60)/(100))
+  # [[ 3.4. 10 mili-Second ]]
   ms = int(ms%100)
+
+  # [[[ 4. Return Total Reserve Time ]]]
   return \
     str(hour).zfill(2)+":"+\
     str(minute).zfill(2)+":"+\
@@ -346,7 +369,9 @@ def GetTotalReserveTime():
     str(ms).zfill(2)
 
 # Get Reserve Detail
-def ReserveDetail(id):
+def ReserveDetail(
+     id # String(In): BookID
+    ): # String with HTML
   global conn
   global c
   global lock
@@ -365,7 +390,7 @@ def ReserveDetail(id):
   return list
 
 # Reset DB
-def Reset():
+def Reset(): # None
   global conn
   global lock
   # [[[ 1. Lock ]]]
