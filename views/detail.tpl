@@ -45,9 +45,14 @@ $.mobile.pushStateEnabled = false;
   <div data-role="header"><h1>確認</h1></div>
   <div data-role="content">
 予約しますか。
-    <form>
-    <a data-role="button" href="add?user={{!name}}&fileId={{!id}}&keyword={{!keyword}}&page={{!page}}" rel="external">はい</a>
-    <a data-role="button" href="/" data-rel="back">いいえ</a>
+    <form method="GET" action="add" data-ajax="false">
+      <input id="comment" name="comment" value="" type="text" />
+      <input id="user" name="user" type="hidden" value="{{!name}}" />
+      <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
+      <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
+      <input id="page" name="page" type="hidden" value="{{!page}}" />
+      <input type="submit" value="はい" />
+      <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>
   </div>
   <div data-role="footer"></div>
@@ -57,8 +62,13 @@ $.mobile.pushStateEnabled = false;
   <div data-role="header"><h1>確認</h1></div>
   <div data-role="content">
 割り込み予約しますか。
-    <form>
-      <a data-role="button" href="insert?user={{!name}}&fileId={{!id}}&keyword={{!keyword}}&page={{!page}}" rel="external">はい</a>
+    <form method="GET" action="insert" data-ajax="false">
+      <input id="comment" name="comment" value="" type="text" />
+      <input id="user" name="user" type="hidden" value="{{!name}}" />
+      <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
+      <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
+      <input id="page" name="page" type="hidden" value="{{!page}}" />
+      <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>
   </div>
