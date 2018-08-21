@@ -109,7 +109,8 @@ def Historylist():
     list = list + \
       "<li style=\"white-space:pre-line;\">" + \
       row[1] + "<br>" + \
-      os.path.basename(row[0]) + \
+      os.path.basename(row[0]) + "<br>" + \
+      row[2] + \
       "</li>"
   return list
 

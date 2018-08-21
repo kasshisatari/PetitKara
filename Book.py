@@ -381,7 +381,7 @@ def ReserveDetail(
 
   # [[[ 2. Query ]]]
   for row in c.execute("select * from Book where BookId = " + id):
-    list = row[3] + "<br>" + row[2] + "<br>" + row[6] + "<br>"
+    list = row[3] + "<br>" + row[2] + "<br>" + row[6] + "<br>" + row[4] + "<br>"
 
   # [[[ 3. UnLock ]]]
   conn.rollback()
