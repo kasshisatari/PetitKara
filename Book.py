@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2018 oscillo
 # 
 # Permission is hereby granted, free of charge,
@@ -111,12 +113,12 @@ def AddTop(
       idx = idx - 1
 
   # [[[ 5. Insert Last Record ]]]
-  c.execute("insert into Book values("+
+  c.execute("insert into Book values(" +
     str(BookId) + "," +
     str(1) + "," +
     "\"" + path + "\"," +
     "\"" + user + "\"," +
-    "\"" + comment + "\"," +
+    "\"" + comment.decode("utf-8") + "\"," +
     str(int(visible)) + "," +
     "\"" + duration + "\"," +
     str(int(dummy)) + ")")
@@ -177,12 +179,12 @@ def AddLast(
     return False
 
   # [[[ 4. Insert Last Record ]]]
-  c.execute("insert into Book values("+
+  c.execute("insert into Book values(" +
     str(BookId) + "," +
     str(Idx) + "," +
     "\"" + path + "\"," +
     "\"" + user + "\"," +
-    "\"" + comment + "\"," +
+    "\"" + comment.decode("utf-8") + "\"," +
     str(int(visible)) + "," +
     "\"" + duration + "\"," +
     str(int(dummy)) + ")")
