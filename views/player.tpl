@@ -10,6 +10,7 @@
 % for row in Book.List():
 %   list = list +  \
 %     "<tr><td>" + row[3] + "</td>" + \
+%     "<td>" + row[4] + "</td>" + \
 %     "<td>" + os.path.basename(row[2]) + "</td></tr>"
 % end
 {{!list}}
