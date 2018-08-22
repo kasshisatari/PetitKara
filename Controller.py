@@ -206,14 +206,13 @@ def history():
 @app.get("/insert")
 def insert():
   fileId = request.query.get('fileId')
-  comment = request.query.get('comment')
   visible = request.query.get('secret')
   if ("on"==visible):
     visible = False
   else:
     visible = True
   dirName, fileName = File.Get(fileId)
-  Book.AddTop(os.path.join(dirName,fileName),request.query.user,comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
+  Book.AddTop(os.path.join(dirName,fileName),request.query.user,request.query.comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
   return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
 
 @app.get("/playlist")
@@ -232,14 +231,13 @@ def reserve():
 @app.get("/add")
 def add():
   fileId = request.query.get('fileId')
-  comment = request.query.get('comment')
   visible = request.query.get('secret')
   if ("on"==visible):
     visible = False
   else:
     visible = True
   dirName, fileName = File.Get(fileId)
-  Book.AddLast(os.path.join(dirName,fileName),request.query.user,comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
+  Book.AddLast(os.path.join(dirName,fileName),request.query.user,request.query.comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
   return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
 
 @app.get("/dummy")

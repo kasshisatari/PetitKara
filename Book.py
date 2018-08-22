@@ -118,7 +118,7 @@ def AddTop(
     str(1) + "," +
     "\"" + path + "\"," +
     "\"" + user + "\"," +
-    "\"" + comment.decode("utf-8") + "\"," +
+    "\"" + comment + "\"," +
     str(int(visible)) + "," +
     "\"" + duration + "\"," +
     str(int(dummy)) + ")")
@@ -184,7 +184,7 @@ def AddLast(
     str(Idx) + "," +
     "\"" + path + "\"," +
     "\"" + user + "\"," +
-    "\"" + comment.decode("utf-8") + "\"," +
+    "\"" + comment + "\"," +
     str(int(visible)) + "," +
     "\"" + duration + "\"," +
     str(int(dummy)) + ")")
