@@ -51,6 +51,9 @@ $.mobile.pushStateEnabled = false;
       <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
       <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
       <input id="page" name="page" type="hidden" value="{{!page}}" />
+      <label>
+        <input id="secret" name="secret" type="checkbox" />非公開
+      </label>
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>
@@ -68,6 +71,9 @@ $.mobile.pushStateEnabled = false;
       <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
       <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
       <input id="page" name="page" type="hidden" value="{{!page}}" />
+      <label>
+        <input id="secret" name="secret" type="checkbox" />非公開
+      </label>
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>

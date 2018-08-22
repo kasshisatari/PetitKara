@@ -11,7 +11,7 @@
 %   list = list +  \
 %     "<tr><td>" + row[3] + "</td>" + \
 %     "<td>" + row[4] + "</td>" + \
-%     "<td>" + os.path.basename(row[2]) + "</td></tr>"
+%     "<td>" + (os.path.basename(row[2]) if 1 == row[5] else u"非公開") + "</td></tr>"
 % end
 {{!list}}
 </table>
