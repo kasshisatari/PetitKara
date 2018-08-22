@@ -323,13 +323,17 @@ def Playlist(
 
   # [[[ 2. Add Book List URLs ]]]
   for row in List():
+    if (1 == row[5]):
+      title = os.path.basename(row[2])
+    else:
+      title = u"非公開"
     list = list + \
       "<li><a href=\"reserve?user=" + \
       user + \
       "&bookId=" + \
       str(row[0]) + \
       "\" rel=\"external\">" + \
-      os.path.basename(row[2]) + \
+      title + \
       "</a></li>"
 
   # [[[ 3. Return Book List URLs ]]]
@@ -383,7 +387,11 @@ def ReserveDetail(
 
   # [[[ 2. Query ]]]
   for row in c.execute("select * from Book where BookId = " + id):
-    list = row[3] + "<br>" + row[2] + "<br>" + row[6] + "<br>" + row[4] + "<br>"
+    if (1 == row[5]):
+      title = row[2]
+    else:
+      title = u"非公開"
+    list = row[3] + "<br>" + title + "<br>" + row[6] + "<br>" + row[4] + "<br>"
 
   # [[[ 3. UnLock ]]]
   conn.rollback()
