@@ -26,7 +26,9 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from bottle import Bottle, run, get, template, request, route, static_file, redirect
+from bottle import \
+  Bottle, run, get, template, \
+  request, route, static_file, redirect
 from paste import httpserver as web
 import sqlite3
 import os
@@ -37,6 +39,7 @@ import File
 import Address
 import qrcode
 import VideoInfo
+import HDMI
 
 proc = None    # omxplayer process
 path = None    # playing file path
@@ -66,15 +69,22 @@ def console():
       dummy = bookList[7]
       if dummy == 0:
         command = "omxplayer -b -o hdmi --vol " + str(vol) + " \"" + path + "\""
-        proc = subprocess.Popen(command,shell=True,stdin=subprocess.PIPE)
+        proc = subprocess.Popen( \
+          command, \
+          shell=True, \
+          stdin=subprocess.PIPE)
         log = open(historyFile, "a")
         name, ext = os.path.splitext(os.path.basename(path))
-        log.write(str(count)+"."+name.encode('utf-8')+" - "+user.encode('utf-8')+"\n\n")
+        log.write( \
+          str(count) + "." + \
+          name.encode('utf-8') + " - " + \
+          user.encode('utf-8')+"\n\n")
         count = count + 1
         log.close()
         History.Add(path, user, comment)
         pause = False
       else:
+        HDMI.Switch()
         pause = True
       bookId = bookList[0]
       Book.Delete(bookId)
@@ -101,8 +111,18 @@ def restart():
 @app.get("/current")
 def current():
   if proc is None:
-    return template('nothing', name = request.query.user, vol = vol/100, pause = u"再開" if pause is True else u"一時停止")
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+    return template( \
+      'nothing', \
+      name = request.query.user, \
+      vol = vol/100, \
+      pause = u"再開" if pause is True else u"一時停止")
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, \
+    path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.get("/stop")
 def stop():
@@ -112,22 +132,38 @@ def stop():
   dbusAddress.close()
   subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Action int32:15'.split())
   proc = None
-  return template('search', name = request.query.user, keyword = "")
+  return template( \
+    'search', \
+    name = request.query.user, \
+    keyword = "")
 
 @app.get("/pause")
 def suspend():
   global proc
   global pause
+  if pause is True and proc is None:
+    HDMI.Switch()
   if proc is not None:
     proc.stdin.write(b"p")
     proc.stdin.flush()
-  if pause is True:
-    pause = False
-  else:
+  if pause is False:
+    if proc is None:
+      HDMI.Switch()
     pause = True
+  else:
+    pause = False
   if proc is None:
-    return template('nothing', name = request.query.user, vol = vol/100, pause = u"再開" if pause is True else u"一時停止")
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+    return template( \
+      'nothing', \
+      name = request.query.user, \
+      vol = vol/100, \
+      pause = u"再開" if pause is True else u"一時停止")
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.get("/audio")
 def audio():
@@ -135,7 +171,13 @@ def audio():
   if proc is not None:
     proc.stdin.write(b"k")
     proc.stdin.flush()
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, \
+    path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.get("/rew")
 def rew():
@@ -145,8 +187,18 @@ def rew():
   dbusAddress.close()
   subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:-5000000'.split())
   if proc is None:
-    return template('nothing', name = request.query.user, vol = vol/100, pause = u"再開" if pause is True else u"一時停止")
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+    return template( \
+      'nothing', \
+      name = request.query.user, \
+      vol = vol/100, \
+      pause = u"再開" if pause is True else u"一時停止")
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, \
+    path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.get("/ff")
 def ff():
@@ -156,8 +208,18 @@ def ff():
   dbusAddress.close()
   subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:5000000'.split())
   if proc is None:
-    return template('nothing', name = request.query.user, vol = vol/100, pause = u"再開" if pause is True else u"一時停止")
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+    return template( \
+      'nothing', \
+      name = request.query.user, \
+      vol = vol/100, \
+      pause = u"再開" if pause is True else u"一時停止")
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, \
+    path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.get("/down")
 def down():
@@ -168,8 +230,17 @@ def down():
     proc.stdin.write(b"-")
     proc.stdin.flush()
   if proc is None:
-    return template('nothing', name = request.query.user, vol = vol/100, pause = u"再開" if pause is True else u"一時停止")
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+    return template( \
+      'nothing', \
+      name = request.query.user, \
+      vol = vol/100, \
+      pause = u"再開" if pause is True else u"一時停止")
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.get("/up")
 def up():
@@ -180,8 +251,18 @@ def up():
     proc.stdin.write(b"+")
     proc.stdin.flush()
   if proc is None:
-    return template('nothing', name = request.query.user, vol = vol/100, pause = u"再開" if pause is True else u"一時停止")
-  return template('current', name = request.query.user, user = user, path = path, comment = comment, vol = vol/100)
+    return template( \
+      'nothing', \
+      name = request.query.user, \
+      vol = vol/100, \
+      pause = u"再開" if pause is True else u"一時停止")
+  return template( \
+    'current', \
+    name = request.query.user, \
+    user = user, \
+    path = path, \
+    comment = comment, \
+    vol = vol/100)
 
 @app.route('/static/:path#.+#', name='static')
 def static(path):
@@ -193,15 +274,24 @@ def top():
 
 @app.get("/search")
 def search():
-  return template('search', name = request.query.user, keyword = request.query.keyword)
+  return template( \
+    'search', \
+    name = request.query.user, \
+    keyword = request.query.keyword)
 
 @app.get("/list")
 def listpage():
-  return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
+  return template( \
+    'list', \
+    name = request.query.user, \
+    keyword = request.query.keyword, \
+    page=request.query.page)
 
 @app.get("/history")
 def history():
-  return template('history', name = request.query.user)
+  return template( \
+    'history', \
+    name = request.query.user)
 
 @app.get("/insert")
 def insert():
@@ -213,20 +303,31 @@ def insert():
     visible = True
   dirName, fileName = File.Get(fileId)
   Book.AddTop(os.path.join(dirName,fileName),request.query.user,request.query.comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
-  return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
+  return template( \
+    'list', \
+    name = request.query.user, \
+    keyword = request.query.keyword, \
+    page = request.query.page)
 
 @app.get("/playlist")
 def playlist():
-  return template('playlist', name = request.query.user)
+  return template( \
+    'playlist', \
+    name = request.query.user)
 
 @app.get("/delete")
 def delete():
   Book.Delete(int(request.query.bookId))
-  return template('playlist', name = request.query.user)
+  return template( \
+    'playlist', \
+    name = request.query.user)
 
 @app.get("/reserve")
 def reserve():
-  return template('reserve', name = request.query.user, id = request.query.bookId)
+  return template( \
+    'reserve', \
+    name = request.query.user, \
+    id = request.query.bookId)
 
 @app.get("/add")
 def add():
@@ -237,17 +338,49 @@ def add():
   else:
     visible = True
   dirName, fileName = File.Get(fileId)
-  Book.AddLast(os.path.join(dirName,fileName),request.query.user,request.query.comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
-  return template('list', name = request.query.user, keyword = request.query.keyword, page=request.query.page)
+  Book.AddLast( \
+    os.path.join(dirName,fileName), \
+    request.query.user, \
+    request.query.comment, \
+    visible, \
+    VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
+    False)
+  return template( \
+    'list', \
+    name = request.query.user, \
+    keyword = request.query.keyword, \
+    page=request.query.page)
 
 @app.get("/dummy")
 def dummy():
-  Book.AddLast(u"空予約",request.query.user,"comment",True,"00:00:00.00",True)
-  return template('search', name = request.query.user, keyword = request.query.keyword)
+  Book.AddLast( \
+    u"空予約", \
+    request.query.user, \
+    "", \
+    True, \
+    "00:00:00.00", \
+    True)
+  return template( \
+    'search', \
+    name = request.query.user, \
+    keyword = request.query.keyword)
 
 @app.get("/detail")
 def detail():
-  return template('detail', name = request.query.user, id = request.query.fileId, keyword = request.query.keyword, page=request.query.page)
+  if (True is File.CheckFile(request.query.fileId)):
+    return template( \
+      'detail', \
+      name = request.query.user, \
+      id = request.query.fileId, \
+      keyword = request.query.keyword, \
+      page=request.query.page)
+  else:
+    return template( \
+      'novideo', \
+      name = request.query.user, \
+      id = request.query.fileId, \
+      keyword = request.query.keyword, \
+      page=request.query.page)
 
 @app.get("/refresh")
 def refresh():
@@ -273,8 +406,11 @@ def refresh():
 
 @app.get("/player")
 def player():
-  return template('remotectrl', name = request.query.user)
+  return template( \
+    'remotectrl', \
+    name = request.query.user)
 
+HDMI.init()
 img = qrcode.make("http://"+Address.Getwlan0()+":8080/")
 img.save("static/toppage.png")
 web.serve(app,host="0.0.0.0",port=8080)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2018 oscillo
 # 
 # Permission is hereby granted, free of charge,
@@ -38,6 +39,8 @@ c = None                # SQLite Cursor
 def recFiles(directories): # string for filepath
   for root, dirs, files in os.walk(directories):
     for file in files:
+      if -1 != root.find('/$RECYCLE.BIN/'):
+        continue
       if file[-4:] == ".avi" or file[-4:] == ".mp4":
         yield (file,root)
 
@@ -191,8 +194,38 @@ def Detail(no,user): # string html
   lock.release()
   # [[[ 5. Make Tag ]]]
   list = filePath + "<br>" + "{:,}".format(size) + "[Byte]<br>"
-  list = list + VideoInfo.GetDuration(filePath)
+  if (None is VideoInfo.GetDuration(filePath)):
+    list = u"動画が見つかりません。" + "<br>" + u"曲情報を更新してください。"
+  else:
+    list = list + VideoInfo.GetDuration(filePath)
   return list
+
+# CheckFile
+def CheckFile(no): # Exist(True) / Not Exist(False)
+  global lock
+  global conn
+  global c
+   # [[[ 1. Lock ]]]
+  lock.acquire()
+  # [[[ 2. Prepare SQLite ]]]
+  if conn is None:
+    conn = sqlite3.connect(fileName, check_same_thread=False)
+    c = conn.cursor()
+  # [[[ 3. Prepare SQL statement ]]]
+  sql = 'SELECT FileID, DirName, FileName, Size FROM File WHERE FileID = ' + no
+  # [[[ 4. Query ]]]
+  filePath = ''
+  for row in c.execute(sql):
+    filePath = os.path.join(row[1],row[2])
+  # [[[ 5. Unlock ]]]
+  lock.release()
+  # [[[ 6. CheckFile ]]]
+  if not os.path.exists(filePath):
+    # < File not Exists >
+    return False
+  else:
+    # < File Exists >
+    return True
 
 # Delete DB
 def Delete(): # None
