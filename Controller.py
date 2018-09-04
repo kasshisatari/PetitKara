@@ -40,8 +40,8 @@ import Address
 import qrcode
 import VideoInfo
 import HDMI
+import Video
 
-proc = None    # omxplayer process
 path = None    # playing file path
 user = None    # playing file user
 comment = None # playing file comment
@@ -54,25 +54,20 @@ pause = False  # pause
 
 @app.get("/console")
 def console():
-  global proc
   global path
   global user
   global comment
   global count
   global pause
   if len(Book.List()) != 0 and pause is False:
-    if proc is None:
+    if Video.CheckPlaying() is False:
       bookList = Book.List()[0]
       path = bookList[2]
       user = bookList[3]
       comment = bookList[4]
       dummy = bookList[7]
       if dummy == 0:
-        command = "omxplayer -b -o hdmi --vol " + str(vol) + " \"" + path + "\""
-        proc = subprocess.Popen( \
-          command, \
-          shell=True, \
-          stdin=subprocess.PIPE)
+        Video.Open(path, vol)
         log = open(historyFile, "a")
         name, ext = os.path.splitext(os.path.basename(path))
         log.write( \
@@ -88,13 +83,11 @@ def console():
         pause = True
       bookId = bookList[0]
       Book.Delete(bookId)
- 
-  if proc is not None:
-    if proc.poll() is not None:
-      proc = None
-      path = None
-      user = None
-      comment = None
+
+  if Video.CheckPlaying() is False:
+    path = None
+    user = None
+    comment = None
   
   return template('player')
 
@@ -110,7 +103,7 @@ def restart():
 
 @app.get("/current")
 def current():
-  if proc is None:
+  if Video.CheckPlaying() is False:
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -126,12 +119,7 @@ def current():
 
 @app.get("/stop")
 def stop():
-  global proc
-  dbusAddress = open("/tmp/omxplayerdbus.pi","r")
-  os.environ["DBUS_SESSION_BUS_ADDRESS"] = dbusAddress.readline()[0:-1]
-  dbusAddress.close()
-  subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Action int32:15'.split())
-  proc = None
+  Video.Stop()
   return template( \
     'search', \
     name = request.query.user, \
@@ -139,20 +127,17 @@ def stop():
 
 @app.get("/pause")
 def suspend():
-  global proc
   global pause
-  if pause is True and proc is None:
+  if pause is True and Video.CheckPlaying() is False:
     HDMI.Switch()
-  if proc is not None:
-    proc.stdin.write(b"p")
-    proc.stdin.flush()
+  Video.Pause()
   if pause is False:
-    if proc is None:
+    if Video.CheckPlaying() is False:
       HDMI.Switch()
     pause = True
   else:
     pause = False
-  if proc is None:
+  if Video.CheckPlaying() is False:
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -167,10 +152,7 @@ def suspend():
 
 @app.get("/audio")
 def audio():
-  global proc
-  if proc is not None:
-    proc.stdin.write(b"k")
-    proc.stdin.flush()
+  Video.SwitchAudio()
   return template( \
     'current', \
     name = request.query.user, \
@@ -181,12 +163,8 @@ def audio():
 
 @app.get("/rew")
 def rew():
-  global proc
-  dbusAddress = open("/tmp/omxplayerdbus.pi","r")
-  os.environ["DBUS_SESSION_BUS_ADDRESS"] = dbusAddress.readline()[0:-1]
-  dbusAddress.close()
-  subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:-5000000'.split())
-  if proc is None:
+  Video.Rewind()
+  if Video.CheckPlaying() is False:
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -202,12 +180,8 @@ def rew():
 
 @app.get("/ff")
 def ff():
-  global proc
-  dbusAddress = open("/tmp/omxplayerdbus.pi","r")
-  os.environ["DBUS_SESSION_BUS_ADDRESS"] = dbusAddress.readline()[0:-1]
-  dbusAddress.close()
-  subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:5000000'.split())
-  if proc is None:
+  Video.FastForward()
+  if Video.CheckPlaying() is False:
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -223,13 +197,10 @@ def ff():
 
 @app.get("/down")
 def down():
-  global proc
   global vol
   vol = vol - volStep
-  if proc is not None:
-    proc.stdin.write(b"-")
-    proc.stdin.flush()
-  if proc is None:
+  Video.DownVolume()
+  if Video.CheckPlaying() is False:
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -244,13 +215,10 @@ def down():
 
 @app.get("/up")
 def up():
-  global proc
   global vol
   vol = vol + volStep
-  if proc is not None:
-    proc.stdin.write(b"+")
-    proc.stdin.flush()
-  if proc is None:
+  Video.UpVolume()
+  if Video.CheckPlaying() is False:
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -302,7 +270,13 @@ def insert():
   else:
     visible = True
   dirName, fileName = File.Get(fileId)
-  Book.AddTop(os.path.join(dirName,fileName),request.query.user,request.query.comment,visible,VideoInfo.GetDuration(os.path.join(dirName,fileName)),False)
+  Book.AddTop( \
+    os.path.join(dirName,fileName), \
+    request.query.user, \
+    request.query.comment, \
+    visible, \
+    VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
+    False)
   return template( \
     'list', \
     name = request.query.user, \

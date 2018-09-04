@@ -37,7 +37,7 @@ def init(): # None
   global pin
   subprocess.call("gpio -g mode " + pin + " out", shell=True) 
 
-# Add Top Record
+# Switch HDMI Signal
 def Switch(): # None
   global pin
   global wait
