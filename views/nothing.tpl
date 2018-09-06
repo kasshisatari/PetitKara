@@ -19,7 +19,7 @@ $.mobile.pushStateEnabled = false;
 
 <div data-role="page">
   <div data-role="header" data-add-back-btn="true">
-    <a href="search?user={{!name}}" rel="external">戻る</a>
+    <a href="{{!back}}?user={{!name}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}" rel="external">戻る</a>
     <h1>{{!name}}</h1>
   </div>
   <div role="main" class="ui-content">

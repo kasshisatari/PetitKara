@@ -19,9 +19,9 @@ $.mobile.pushStateEnabled = false;
 
 <div id="search" data-role="page">
   <div data-role="header">
-    <a href="current?user={{!name}}" rel="external">状態</a>
-    <h1>{{!name}}</h1>
     <a href="/" rel="external">ログアウト</a>
+    <h1>{{!name}}</h1>
+    <a href="current?user={{!name}}&back=search" rel="external">状態</a>
   </div>
   <div role="main" class="ui-content">
     <form method="GET" action="list?user={{!name}}">

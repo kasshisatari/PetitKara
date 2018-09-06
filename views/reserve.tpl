@@ -21,6 +21,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="header">
     <a href="playlist?user={{!name}}" rel="external">戻る</a>
     <h1>予約詳細</h1>
+    <a href="current?user={{!name}}&back=reserve&bookId={{!id}}" rel="external">状態</a>
   </div>
 
   <div role="main" class="ui-content">

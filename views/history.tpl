@@ -23,7 +23,7 @@ $.mobile.pushStateEnabled = false;
 % import History
     <a href="search?user={{!name}}" rel="external">戻る</a>
     <h1>履歴</h1>
-    <a href="/" rel="external">ログアウト</a>
+    <a href="current?user={{!name}}&back=history" rel="external">状態</a>
   </div>
 
   <div role="main" class="ui-content">

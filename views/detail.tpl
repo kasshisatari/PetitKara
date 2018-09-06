@@ -22,6 +22,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="header">
   <a href="list?user={{!name}}&keyword={{!keyword}}&page={{!page}}" rel="external">戻る</a>
     <h1>{{!name}}</h1>
+    <a href="current?user={{!name}}&back=detail&fileId={{!id}}&keyword={{!keyword}}&page={{!page}}" rel="external">状態</a>
   </div>
 
   <div role="main" class="ui-content">

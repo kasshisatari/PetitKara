@@ -19,13 +19,11 @@ $.mobile.pushStateEnabled = false;
 
 <div data-role="page">
   <div data-role="header" data-add-back-btn="true">
-    <a href="search?user={{!name}}" rel="external">戻る</a>
+    <a href="{{!back}}?user={{!name}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}" rel="external">戻る</a>
     <h1>{{!user}}</h1>
   </div>
   <div role="main" class="ui-content">
 {{!path}}<br>
-% import VideoInfo
-% duration = VideoInfo.GetDuration(path)
 {{!duration}}<br>
 音量は{{!vol}}dBです。
   </div>
@@ -45,7 +43,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="content">
 動画再生を終了しますか。
   <form>
-  <a data-role="button" href="stop?user={{!name}}" rel="external">はい</a>
+  <a data-role="button" href="stop?user={{!name}}&keyword={{!keyword}}&back={{!back}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}" rel="external">はい</a>
   <a data-role="button" href="/" data-rel="back">いいえ</a>
   </form>
   </div>

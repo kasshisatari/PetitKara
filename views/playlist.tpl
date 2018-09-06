@@ -25,6 +25,7 @@ $.mobile.pushStateEnabled = false;
       予約一覧<br>
       {{!time}}
     </h1>
+    <a href="current?user={{!name}}&back=playlist" rel="external">状態</a>
   </div>
   <div role="main" class="ui-content">
     <ul data-role="listview">
