@@ -29,6 +29,7 @@
 import time
 import subprocess
 import os
+import threading
 
 proc = None    # omxplayer process
 
@@ -71,17 +72,28 @@ def SetDBusEnvironment() : # None
     dbusAddress.readline()[0:-1]
   dbusAddress.close()
 
-# Stop Playing Video
-def Stop() : # None
+# Fade Stop Playing Video
+def FadeStopThread() : # None
   global proc
   if proc is not None:
     # < omxplayer is running >
-    # [[[ 1. exit omxplayer ]]]
+    # [[[ 1. volume down ]]]
+    for i in range(15):
+      proc.stdin.write(b"-")
+      proc.stdin.flush()
+      time.sleep(0.2)
+    # [[[ 2. exit omxplayer ]]]
     proc.stdin.write(b"q")
-    # [[[ 2. Flush stdin ]]]
+    # [[[ 3. Flush stdin ]]]
     proc.stdin.flush()
-    # [[[ 3. Terminate omxplayer ]]]
+    # [[[ 4. Terminate omxplayer ]]]
     proc = None
+
+# Stop Playing Video
+def Stop() : # None
+  # [[[ 1. Create tread that has sleep ]]]
+  thread = threading.Thread(target=FadeStopThread)
+  thread.start()
 
 # Pause Video
 def Pause() : # None

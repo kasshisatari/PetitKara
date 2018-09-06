@@ -32,6 +32,8 @@ fileName = "hisotry.db" # DB File Name
 conn = None             # SQLite Connection
 c = None                # SQLite Cursor
 lock = threading.Lock() # Lock Object
+count = 1               # count for historyFile
+historyFile = "history.txt"
 
 # Initialize DB
 def init(): # None
@@ -64,6 +66,7 @@ def Add(
   global conn
   global c
   global lock
+  global count
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
@@ -78,6 +81,16 @@ def Add(
   # [[[ 3. UnLock ]]]
   conn.commit()
   lock.release()
+
+  # [[[ 4. Add History File ]]]
+  log = open(historyFile, "a")
+  name, ext = os.path.splitext(os.path.basename(path))
+  log.write( \
+    str(count) + "." + \
+    name.encode('utf-8') + " - " + \
+    user.encode('utf-8') + "\n\n")
+  count = count + 1
+  log.close()
 
   return True
 
@@ -119,6 +132,7 @@ def Delete():
   global conn
   global c
   global lock
+  global count
   # [[[ 1. Lock ]]]
   lock.acquire()
 
@@ -135,6 +149,14 @@ def Delete():
 
   # [[[ 5. Unlock ]]]
   lock.release()
+
+  # [[[ 6. Reset count ]]]
+  count = 1
+
+  # [[[ 7. Delete File ]]]
+  if os.path.exists(historyFile):
+    os.remove(historyFile)
+
   return
 
 init()

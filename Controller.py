@@ -42,23 +42,22 @@ import VideoInfo
 import HDMI
 import Video
 
-path = None    # playing file path
-user = None    # playing file user
-comment = None # playing file comment
-vol = -2100    # current volume
-count = 1      # count for historyFile
-historyFile = "history.txt"
-volStep = 300  # 0.3dB
-app = Bottle() # bottle instance
-pause = False  # pause
+path = None     # playing file path
+user = None     # playing file user
+comment = None  # playing file comment
+duration = None # playing file duration
+vol = -2100     # current volume
+volStep = 300   # 0.3dB
+app = Bottle()  # bottle instance
+pause = False   # pause
 
 @app.get("/console")
 def console():
   global path
   global user
   global comment
-  global count
   global pause
+  global duration
   if len(Book.List()) != 0 and pause is False:
     if Video.CheckPlaying() is False:
       bookList = Book.List()[0]
@@ -66,16 +65,9 @@ def console():
       user = bookList[3]
       comment = bookList[4]
       dummy = bookList[7]
+      duration = VideoInfo.GetDuration(path)
       if dummy == 0:
         Video.Open(path, vol)
-        log = open(historyFile, "a")
-        name, ext = os.path.splitext(os.path.basename(path))
-        log.write( \
-          str(count) + "." + \
-          name.encode('utf-8') + " - " + \
-          user.encode('utf-8')+"\n\n")
-        count = count + 1
-        log.close()
         History.Add(path, user, comment)
         pause = False
       else:
@@ -88,18 +80,19 @@ def console():
     path = None
     user = None
     comment = None
+    duration = None
   
   return template('player')
 
 @app.get("/shutdown")
 def shutdown():
   os.system("sudo shutdown -h now")
-  return ""
+  redirect("/")
 
 @app.get("/restart")
 def restart():
   os.system("sudo shutdown -r now")
-  return ""
+  redirect("/")
 
 @app.get("/current")
 def current():
@@ -108,6 +101,11 @@ def current():
       'nothing', \
       name = request.query.user, \
       vol = vol/100, \
+      back = request.query.back, \
+      keyword = request.query.keyword, \
+      page = request.query.page, \
+      fileId = request.query.fileId, \
+      bookId = request.query.bookId, \
       pause = u"再開" if pause is True else u"一時停止")
   return template( \
     'current', \
@@ -115,15 +113,24 @@ def current():
     user = user, \
     path = path, \
     comment = comment, \
+    duration = duration, \
+    back = request.query.back, \
+    keyword = request.query.keyword, \
+    page = request.query.page, \
+    fileId = request.query.fileId, \
+    bookId = request.query.bookId, \
     vol = vol/100)
 
 @app.get("/stop")
 def stop():
   Video.Stop()
-  return template( \
-    'search', \
-    name = request.query.user, \
-    keyword = "")
+  redirect( \
+    request.query.back + \
+    "?name=" + request.query.user + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookId)
 
 @app.get("/pause")
 def suspend():
@@ -137,100 +144,36 @@ def suspend():
     pause = True
   else:
     pause = False
-  if Video.CheckPlaying() is False:
-    return template( \
-      'nothing', \
-      name = request.query.user, \
-      vol = vol/100, \
-      pause = u"再開" if pause is True else u"一時停止")
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, path = path, \
-    comment = comment, \
-    vol = vol/100)
+  redirect("/current?user=" + request.query.user)
 
 @app.get("/audio")
 def audio():
   Video.SwitchAudio()
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, \
-    path = path, \
-    comment = comment, \
-    vol = vol/100)
+  redirect("/current?user=" + request.query.user)
 
 @app.get("/rew")
 def rew():
   Video.Rewind()
-  if Video.CheckPlaying() is False:
-    return template( \
-      'nothing', \
-      name = request.query.user, \
-      vol = vol/100, \
-      pause = u"再開" if pause is True else u"一時停止")
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, \
-    path = path, \
-    comment = comment, \
-    vol = vol/100)
+  redirect("/current?user=" + request.query.user)
 
 @app.get("/ff")
 def ff():
   Video.FastForward()
-  if Video.CheckPlaying() is False:
-    return template( \
-      'nothing', \
-      name = request.query.user, \
-      vol = vol/100, \
-      pause = u"再開" if pause is True else u"一時停止")
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, \
-    path = path, \
-    comment = comment, \
-    vol = vol/100)
+  redirect("/current?user=" + request.query.user)
 
 @app.get("/down")
 def down():
   global vol
   vol = vol - volStep
   Video.DownVolume()
-  if Video.CheckPlaying() is False:
-    return template( \
-      'nothing', \
-      name = request.query.user, \
-      vol = vol/100, \
-      pause = u"再開" if pause is True else u"一時停止")
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, path = path, \
-    comment = comment, \
-    vol = vol/100)
+  redirect("/current?user=" + request.query.user)
 
 @app.get("/up")
 def up():
   global vol
   vol = vol + volStep
   Video.UpVolume()
-  if Video.CheckPlaying() is False:
-    return template( \
-      'nothing', \
-      name = request.query.user, \
-      vol = vol/100, \
-      pause = u"再開" if pause is True else u"一時停止")
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, \
-    path = path, \
-    comment = comment, \
-    vol = vol/100)
+  redirect("/current?user=" + request.query.user)
 
 @app.route('/static/:path#.+#', name='static')
 def static(path):
@@ -277,11 +220,10 @@ def insert():
     visible, \
     VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
-  return template( \
-    'list', \
-    name = request.query.user, \
-    keyword = request.query.keyword, \
-    page = request.query.page)
+  redirect( \
+    "/list?user=" + request.query.user + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page)
 
 @app.get("/playlist")
 def playlist():
@@ -319,11 +261,10 @@ def add():
     visible, \
     VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
-  return template( \
-    'list', \
-    name = request.query.user, \
-    keyword = request.query.keyword, \
-    page=request.query.page)
+  redirect( \
+    "/list?user=" + request.query.user + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page)
 
 @app.get("/dummy")
 def dummy():
@@ -358,31 +299,20 @@ def detail():
 
 @app.get("/refresh")
 def refresh():
-  global count
   File.init()
-  return template('top')
+  redirect("/")
 
 @app.get("/reset")
 def reset():
   Book.Reset()
   File.Delete()
   History.Delete()
-  return template('top')
+  redirect("/")
 
 @app.get("/initHistory")
 def refresh():
-  global count
-  count = 1
-  if os.path.exists(historyFile):
-    os.remove(historyFile)
   History.Delete()
-  return template('top')
-
-@app.get("/player")
-def player():
-  return template( \
-    'remotectrl', \
-    name = request.query.user)
+  redirect("/")
 
 HDMI.init()
 img = qrcode.make("http://"+Address.Getwlan0()+":8080/")
