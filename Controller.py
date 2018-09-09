@@ -144,36 +144,72 @@ def suspend():
     pause = True
   else:
     pause = False
-  redirect("/current?user=" + request.query.user)
+  redirect( \
+    "/current?user=" + request.query.user + \
+    "&back=" + request.query.back + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookid)
 
 @app.get("/audio")
 def audio():
   Video.SwitchAudio()
-  redirect("/current?user=" + request.query.user)
+  redirect( \
+    "/current?user=" + request.query.user + \
+    "&back=" + request.query.back + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookid)
 
 @app.get("/rew")
 def rew():
   Video.Rewind()
-  redirect("/current?user=" + request.query.user)
+  redirect( \
+    "/current?user=" + request.query.user + \
+    "&back=" + request.query.back + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookid)
 
 @app.get("/ff")
 def ff():
   Video.FastForward()
-  redirect("/current?user=" + request.query.user)
+  redirect( \
+    "/current?user=" + request.query.user + \
+    "&back=" + request.query.back + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookid)
 
 @app.get("/down")
 def down():
   global vol
   vol = vol - volStep
   Video.DownVolume()
-  redirect("/current?user=" + request.query.user)
+  redirect( \
+    "/current?user=" + request.query.user + \
+    "&back=" + request.query.back + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookid)
 
 @app.get("/up")
 def up():
   global vol
   vol = vol + volStep
   Video.UpVolume()
-  redirect("/current?user=" + request.query.user)
+  redirect( \
+    "/current?user=" + request.query.user + \
+    "&back=" + request.query.back + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page + \
+    "&fileId=" + request.query.fileId + \
+    "&bookId=" + request.query.bookid)
 
 @app.route('/static/:path#.+#', name='static')
 def static(path):

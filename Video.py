@@ -31,7 +31,8 @@ import subprocess
 import os
 import threading
 
-proc = None    # omxplayer process
+proc = None       # omxplayer process
+stopThread = None # stop thread
 
 # Open and Playing Video
 def Open(path,vol) : # None
@@ -91,9 +92,10 @@ def FadeStopThread() : # None
 
 # Stop Playing Video
 def Stop() : # None
+  global stopThread
   # [[[ 1. Create tread that has sleep ]]]
-  thread = threading.Thread(target=FadeStopThread)
-  thread.start()
+  stopThread = threading.Thread(target=FadeStopThread)
+  stopThread.start()
 
 # Pause Video
 def Pause() : # None

@@ -41,7 +41,10 @@ def recFiles(directories): # string for filepath
     for file in files:
       if -1 != root.find('/$RECYCLE.BIN/'):
         continue
-      if file[-4:] == ".avi" or file[-4:] == ".mp4":
+      if   file[-4:] == ".avi" \
+        or file[-4:] == ".mp4" \
+        or file[-4:] == ".flv" \
+        or file[-4:] == ".mkv":
         yield (file,root)
 
 # Get file information from FileID
