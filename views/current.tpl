@@ -28,12 +28,12 @@ $.mobile.pushStateEnabled = false;
 音量は{{!vol}}dBです。
   </div>
   <div data-role="footer">
-    <a href="down?user={{!name}}" rel="external">音量小</a>
-    <a href="up?user={{!name}}" rel="external">音量大</a>
-    <a href="rew?user={{!name}}" rel="external">巻き戻し</a>
-    <a href="ff?user={{!name}}" rel="external">早送り</a>
-    <a href="audio?user={{!name}}" rel="external">音声切り替え</a>
-    <a href="pause?user={{!name}}" rel="external">一時停止</a>
+    <a href="down?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}" rel="external">音量小</a>
+    <a href="up?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}" rel="external">音量大</a>
+    <a href="rew?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}" rel="external">巻き戻し</a>
+    <a href="ff?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}" rel="external">早送り</a>
+    <a href="audio?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}" rel="external">音声切り替え</a>
+    <a href="pause?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}" rel="external">一時停止</a>
     <a href="#confirm" data-rel="dialog">中止</a>
   </div>
 </div>

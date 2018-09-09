@@ -27,9 +27,9 @@ $.mobile.pushStateEnabled = false;
 音量は{{!vol}}dBです。<br>
   </div>
   <div data-role="footer">
-    <a href="down?user={{!name}}" rel="external">音量小</a>
-    <a href="up?user={{!name}}" rel="external">音量大</a>
-    <a href="pause?user={{!name}}" rel="external">{{!pause}}</a>
+    <a href="down?user={{!name}}&back={{!back}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}" rel="external">音量小</a>
+    <a href="up?user={{!name}}&back={{!back}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}" rel="external">音量大</a>
+    <a href="pause?user={{!name}}&back={{!back}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}" rel="external">{{!pause}}</a>
   </div>
 </div>
 
