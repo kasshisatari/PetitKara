@@ -1,5 +1,5 @@
 sudo apt-get update
-sudo apt-get install -y hostapd dnsmasq xscreensaver
+sudo apt-get install -y hostapd dnsmasq unclutter
 sudo ed /etc/network/interfaces.d/wlan0 << EOF
 a
 iface lo inet loopback
@@ -53,6 +53,10 @@ EOF
 sudo ed /home/pi/.config/lxsession/LXDE-pi/autostart << EOF
 $
 a
+@xset s off
+@xset -dpms
+@xset s noblank
+@unclutter
 @sh /home/pi/Desktop/PetitKara/start.sh
 .
 wq
@@ -66,3 +70,4 @@ sudo ed /boot/config.txt << EOF
 wq
 EOF
 
+reboot
