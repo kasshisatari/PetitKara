@@ -33,7 +33,9 @@ $.mobile.pushStateEnabled = false;
   <div data-role="footer">
     <div data-role="navbar">
       <ul>
+        <li><a href="moveup?user={{!name}}&bookId={{!id}}" rel="external">上に移動</a></li>
         <li><a href="#deleteCheck" data-rel="dialog">削除</a></li>
+        <li><a href="movedown?user={{!name}}&bookId={{!id}}" rel="external">下に移動</a></li>
       </ul>
     </div>
   </div>
