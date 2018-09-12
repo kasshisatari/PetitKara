@@ -226,7 +226,7 @@ def Delete(
 
   # [[[ 5. Delete Record ]]]
   c.execute("delete from Book " +
-    "where Bookid = " + str(bookId))
+    "where BookId = " + str(bookId))
 
   # [[[ 6. Update Idx after Delete Record ]]]
   updateIdx = deleteIdx + 1
@@ -263,6 +263,70 @@ def List(): # list(tuple(BookId,Idx,Path,User,Comment,Visible))
   lock.release()
   return list
 
+# Move Down Book
+def MoveDown(
+      bookId # Int(String) : BookId
+    ) : # Bool : True(Success) / False(Failure)
+  global conn
+  global c
+  global lock
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Get Previous BookId ]]]
+  c.execute( \
+    "SELECT BookId, MIN(Idx) FROM Book " + \
+    "WHERE IDX > " + \
+    "(SELECT Idx FROM Book WHERE BookId = " + \
+    bookId + \
+    ") ORDER BY Idx")
+  prevBookId = c.fetchone()[0]
+  if prevBookId is None:
+    # < BookId is Top or Nothing >
+    # [[ 2.1. Unlock ]]
+    lock.release()
+    return False
+
+  # [[[ 3. Swap ]]]
+  Swap(bookId, prevBookId)
+
+  # [[[ 4. Unlock ]]]
+  lock.release()
+
+  return True
+
+# Move Up Book
+def MoveUp(
+      bookId # Int(String) : BookId
+    ) : # Bool : True(Success) / False(Failure)
+  global conn
+  global c
+  global lock
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Get Previous BookId ]]]
+  c.execute( \
+    "SELECT BookId, MAX(Idx) FROM Book " + \
+    "WHERE IDX < " + \
+    "(SELECT Idx FROM Book WHERE BookId = " + \
+    bookId + \
+    ") ORDER BY Idx")
+  prevBookId = c.fetchone()[0]
+  if prevBookId is None:
+    # < BookId is Top or Nothing >
+    # [[ 2.1. Unlock ]]
+    lock.release()
+    return False
+
+  # [[[ 3. Swap ]]]
+  Swap(bookId, prevBookId)
+
+  # [[[ 4. Unlock ]]]
+  lock.release()
+
+  return True
+
 # Swap Records
 def Swap(
       srcBookId, # Int(In) : Src BookId
@@ -276,7 +340,6 @@ def Swap(
     return False
 
   # [[[ 2. Lock ]]]
-  lock.acquire()
   c.execute("begin")
 
   # [[[ 3. Check BookId ]]]
@@ -310,7 +373,6 @@ def Swap(
  
   # [[[ 5. UnLock ]]]
   conn.commit()
-  lock.release()
 
   return True
 

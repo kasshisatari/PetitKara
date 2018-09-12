@@ -76,7 +76,7 @@ def SetDBusEnvironment() : # None
 # Fade Stop Playing Video
 def FadeStopThread() : # None
   global proc
-  if proc is not None:
+  try:
     # < omxplayer is running >
     # [[[ 1. volume down ]]]
     for i in range(15):
@@ -89,6 +89,8 @@ def FadeStopThread() : # None
     proc.stdin.flush()
     # [[[ 4. Terminate omxplayer ]]]
     proc = None
+  except:
+    pass
 
 # Stop Playing Video
 def Stop() : # None
@@ -100,26 +102,29 @@ def Stop() : # None
 # Pause Video
 def Pause() : # None
   global proc
-  if proc is not None:
+  try:
     # < omxplayer is running >
     # [[[ 1. pause / resume ]]]
     proc.stdin.write(b"p")
     # [[[ 2. Flush stdin ]]]
     proc.stdin.flush()
+  except:
+    pass
 
 # Switch Audio
 def SwitchAudio() : # None
   global proc
-  if proc is not None:
+  try:
     # < omxplayer is running >
     # [[[ 1. next audio stream ]]]
     proc.stdin.write(b"k")
     # [[[ 2. Flush stdin ]]]
     proc.stdin.flush()
+  except:
+    pass
 
 # Rewind
 def Rewind() : # None
-  global proc
   # [[[ 1. Set D-Bus Address to Environment Variable ]]]
   SetDBusEnvironment()
   # [[[ 2. Call for Seek ]]]
@@ -127,7 +132,6 @@ def Rewind() : # None
 
 # Fast Forward
 def FastForward() : # None
-  global proc
   # [[[ 1. Set D-Bus Address to Environment Variable ]]]
   SetDBusEnvironment()
   # [[[ 2. Call for Seek ]]]
@@ -136,20 +140,23 @@ def FastForward() : # None
 # Down Volume
 def DownVolume() : # None
   global proc
-  if proc is not None:
+  try:
     # < omxplayer is running >
     # [[[ 1. next audio stream ]]]
     proc.stdin.write(b"-")
     # [[[ 2. Flush stdin ]]]
     proc.stdin.flush()
+  except:
+    pass
 
 # Up Volume
 def UpVolume() : # None
   global proc
-  if proc is not None:
+  try:
     # < omxplayer is running >
     # [[[ 1. next audio stream ]]]
     proc.stdin.write(b"+")
     # [[[ 2. Flush stdin ]]]
     proc.stdin.flush()
-
+  except:
+    pass

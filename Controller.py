@@ -82,7 +82,7 @@ def console():
     comment = None
     duration = None
   
-  return template('player')
+  return template('console')
 
 @app.get("/shutdown")
 def shutdown():
@@ -270,9 +270,8 @@ def playlist():
 @app.get("/delete")
 def delete():
   Book.Delete(int(request.query.bookId))
-  return template( \
-    'playlist', \
-    name = request.query.user)
+  redirect( \
+    "/playlist?user=" + request.query.user)
 
 @app.get("/reserve")
 def reserve():
@@ -280,6 +279,20 @@ def reserve():
     'reserve', \
     name = request.query.user, \
     id = request.query.bookId)
+
+@app.get("/moveup")
+def moveup():
+  Book.MoveUp(request.query.bookId)
+  redirect( \
+    "/playlist?" + \
+    "user=" + request.query.user)
+
+@app.get("/movedown")
+def movedown():
+  Book.MoveDown(request.query.bookId)
+  redirect( \
+    "/playlist?" + \
+    "user=" + request.query.user)
 
 @app.get("/add")
 def add():
@@ -311,10 +324,9 @@ def dummy():
     True, \
     "00:00:00.00", \
     True)
-  return template( \
-    'search', \
-    name = request.query.user, \
-    keyword = request.query.keyword)
+  redirect( \
+    "/search?user=" + request.query.user + \
+    "&keyword=" + request.query.keyword)
 
 @app.get("/detail")
 def detail():
