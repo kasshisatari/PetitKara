@@ -57,6 +57,29 @@ def init(): # None
       "[Comment] TEXT, " +
       "[Time] TEXT);")
 
+# Count
+def Count(
+      path # String(In): File Full Path
+    ): # String
+  global conn
+  global c
+  global lock
+
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Count History ]]]
+  c.execute( \
+    "SELECT COUNT(*) FROM History WHERE Path = \'" + \
+    path + \
+    "\'")
+  count = c.fetchone()[0]
+
+  # [[[ 3. Unlock ]]]
+  lock.release()
+
+  return count
+
 # Add
 def Add(
       path,    # String(In): File Full Path

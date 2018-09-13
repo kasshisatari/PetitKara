@@ -29,6 +29,7 @@ import threading
 import sqlite3
 import os
 import VideoInfo
+import History
 fileName = "file.db"    # DB File Name  
 limit = 20              # Max Search Record Per Page
 lock = threading.Lock() # Lock Object
@@ -130,26 +131,30 @@ def Search(keywords,user,page): # string with <li></li> elements
   global lock
   global conn
   global c
+
   # [[[ 1. Lock ]]]
   lock.acquire()
+
   # [[[ 2. Check DB File ]]]
   if not os.path.exists("./" + fileName):
     # < File not Exists >
     lock.release()
     return ""
+
   # [[[ 3. Prepare SQLite ]]]
   if conn is None:
     conn = sqlite3.connect(fileName, check_same_thread=False)
     c = conn.cursor()
+
   # [[[ 4. Make <li></li> List ]]]
   list = '' # return html string
   # [[ 4.1. Prepare SQL statement ]]
-  sql = 'SELECT FileID, FileName FROM File WHERE '
+  sql = 'SELECT FileID, FileName, DirName FROM File WHERE '
   isMultiKeyword = 0
   keywords = keywords.strip()
   if keywords == "":
     # < All List >
-    sql = 'SELECT FileID, FileName FROM File'
+    sql = 'SELECT FileID, FileName, DirName FROM File'
   else:
     # < Search List >
     for keyword in keywords.split():
@@ -163,26 +168,46 @@ def Search(keywords,user,page): # string with <li></li> elements
   sql = sql + " OFFSET " + str(limit * (int(page)-1))
   # [[ 4.2. Query ]]
   for row in c.execute(sql):
-    list = list + \
-      "<li><a href=\"detail?fileId=" + str(row[0]) + \
-      "&user=" + user + "&keyword=" + keywords + \
-      "&page=" + page + "\" rel=\"external\">" + \
-      row[1] + "</a></li>"
+    filePath = os.path.join(row[2],row[1])
+    if 0 != History.Count(filePath):
+      # < Already Play >
+      list = list + \
+        "<li><a class=\"ui-btn ui-icon-check ui-btn-icon-left\" " + \
+        "href=\"detail?fileId=" + str(row[0]) + \
+        "&user=" + user + "&keyword=" + keywords + \
+        "&page=" + page + "\" rel=\"external\">" + \
+        row[1] + "</a></li>"
+    else:
+      # < Not Play >
+      list = list + \
+        "<li><a " + \
+        "href=\"detail?fileId=" + str(row[0]) + \
+        "&user=" + user + "&keyword=" + keywords + \
+        "&page=" + page + "\" rel=\"external\">" + \
+        row[1] + "</a></li>"
+
   # [[[ 5. Unlock ]]]
   lock.release()
+
   return list
 
 # Detail
-def Detail(no,user): # string html
+def Detail(
+      no,  # String(In): FileID
+      user # String(In): User Name
+    ): # String(html)
   global lock
   global conn
   global c
+
    # [[[ 1. Lock ]]]
   lock.acquire()
+
   # [[[ 2. Prepare SQLite ]]]
   if conn is None:
     conn = sqlite3.connect(fileName, check_same_thread=False)
     c = conn.cursor()
+
   # [[[ 3. Make <li></li> List ]]]
   list = '' # return html string
   # [[ 3.1. Prepare SQL statement ]]
@@ -193,14 +218,19 @@ def Detail(no,user): # string html
   for row in c.execute(sql):
     size = row[3]
     filePath = os.path.join(row[1],row[2])
+
   # [[[ 4. Unlock ]]]
   lock.release()
+
   # [[[ 5. Make Tag ]]]
   list = filePath + "<br>" + "{:,}".format(size) + "[Byte]<br>"
   if (None is VideoInfo.GetDuration(filePath)):
     list = u"動画が見つかりません。" + "<br>" + u"曲情報を更新してください。"
   else:
     list = list + VideoInfo.GetDuration(filePath)
+    # [[ 5.1. History Count ]]
+    list = list + "<br>" + str(History.Count(filePath)) + u"回"
+
   return list
 
 # CheckFile
