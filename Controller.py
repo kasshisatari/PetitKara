@@ -51,6 +51,7 @@ volStep = 300   # 0.3dB
 app = Bottle()  # bottle instance
 pause = False   # pause
 
+# Monitor View
 @app.get("/console")
 def console():
   global path
@@ -58,45 +59,59 @@ def console():
   global comment
   global pause
   global duration
-  if len(Book.List()) != 0 and pause is False:
-    if Video.CheckPlaying() is False:
+
+  # [[[ 1. Update Playing Video ]]] 
+  if 0 != len(Book.List()) and False is pause:
+    # < Can Play >
+    if False is Video.CheckPlaying():
+      # < Not Playing >
+      # [[ 1.1. Get and Update First Reservation ]]
       bookList = Book.List()[0]
       path = bookList[2]
       user = bookList[3]
       comment = bookList[4]
       dummy = bookList[7]
       duration = VideoInfo.GetDuration(path)
-      if dummy == 0:
+      # [[ 1.2. Check Dummy ]]
+      if 0 == dummy:
+        # < Not Dummy >
+        # [ 1.2.1. Play Video ]
         Video.Open(path, vol)
+        # [ 1.2.2. Add History ]
         History.Add(path, user, comment)
+        # [ 1.2.3. Update pause status for playing ]
         pause = False
       else:
+        # < Dummy >
+        # [ 1.2.4. Switch HDMI Signal ]
         HDMI.Switch()
+        # [ 1.2.5. Update pause status for pausing ]
         pause = True
-      bookId = bookList[0]
-      Book.Delete(bookId)
+      # [[ 1.3. Delete Playing Book ]]
+      Book.Delete(bookList[0])
 
-  if Video.CheckPlaying() is False:
-    path = None
-    user = None
-    comment = None
-    duration = None
-  
+  # [[[ 2. Update View ]]]
   return template('console')
 
+# Shutdown OS
 @app.get("/shutdown")
 def shutdown():
+  # [[[ 1. Shutdown ]]]
   os.system("sudo shutdown -h now")
-  redirect("/")
 
+# Restart OS
 @app.get("/restart")
 def restart():
+  # [[[ 1. Restart ]]]
   os.system("sudo shutdown -r now")
-  redirect("/")
 
+# Remote-Controller View
 @app.get("/current")
 def current():
-  if Video.CheckPlaying() is False:
+  # [[[ 1. Update View ]]]
+  if False is Video.CheckPlaying():
+    # < Not Playing >
+    # [[ 1.1. Not Playing View ]]]
     return template( \
       'nothing', \
       name = request.query.user, \
@@ -107,23 +122,30 @@ def current():
       fileId = request.query.fileId, \
       bookId = request.query.bookId, \
       pause = u"再開" if pause is True else u"一時停止")
-  return template( \
-    'current', \
-    name = request.query.user, \
-    user = user, \
-    path = path, \
-    comment = comment, \
-    duration = duration, \
-    back = request.query.back, \
-    keyword = request.query.keyword, \
-    page = request.query.page, \
-    fileId = request.query.fileId, \
-    bookId = request.query.bookId, \
-    vol = vol/100)
+  else:
+    # < Playing >
+    # [[ 1.2. Playing View ]]
+    return template( \
+      'current', \
+      name = request.query.user, \
+      user = user, \
+      path = path, \
+      comment = comment, \
+      duration = duration, \
+      back = request.query.back, \
+      keyword = request.query.keyword, \
+      page = request.query.page, \
+      fileId = request.query.fileId, \
+      bookId = request.query.bookId, \
+      vol = vol/100)
 
+# Stop Video
 @app.get("/stop")
 def stop():
+  # [[[ 1. Stop Video ]]]
   Video.Stop()
+
+  # [[[ 2. Redirect Previous View ]]]
   redirect( \
     request.query.back + \
     "?name=" + request.query.user + \
@@ -132,18 +154,31 @@ def stop():
     "&fileId=" + request.query.fileId + \
     "&bookId=" + request.query.bookId)
 
+# Pause Video
 @app.get("/pause")
 def suspend():
   global pause
-  if pause is True and Video.CheckPlaying() is False:
+  # [[[ 1. Switch HDMI Signal ]]]
+  if True is pause and False is Video.CheckPlaying():
+    # < Pausing >
     HDMI.Switch()
+
+  # [[[ 2. Pause Video ]]]
   Video.Pause()
-  if pause is False:
-    if Video.CheckPlaying() is False:
+
+  # [[[ 3. Switch HDMI Signal to Other Component ]]]
+  if False is pause:
+    # < Not Pausing >
+    if False is Video.CheckPlaying():
+      # < Not Playing >
       HDMI.Switch()
+    # [[ 3.1. Update Pause Status Not Pausing -> Pausing ]]
     pause = True
   else:
+    # [[ 3.2. Update Pause Status Pausing -> Not Pausing ]]
     pause = False
+
+  # [[[ 4. Redirect Remote-Controller View ]]]
   redirect( \
     "/current?user=" + request.query.user + \
     "&back=" + request.query.back + \
@@ -152,9 +187,13 @@ def suspend():
     "&fileId=" + request.query.fileId + \
     "&bookId=" + request.query.bookid)
 
+# Switch Audio of Video
 @app.get("/audio")
 def audio():
+  # [[[ 1. Switch Audio ]]]
   Video.SwitchAudio()
+
+  # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
     "/current?user=" + request.query.user + \
     "&back=" + request.query.back + \
@@ -362,7 +401,12 @@ def refresh():
   History.Delete()
   redirect("/")
 
+# [[[ 1. Initialize HDMI Signal Switcher ]]]
 HDMI.init()
+
+# [[[ 2. Make QR-Code ]]]
 img = qrcode.make("http://"+Address.Getwlan0()+":8080/")
 img.save("static/toppage.png")
+
+# [[[ 3. Start Web Server ]]]
 web.serve(app,host="0.0.0.0",port=8080)

@@ -70,9 +70,7 @@ def Count(
 
   # [[[ 2. Count History ]]]
   c.execute( \
-    "SELECT COUNT(*) FROM History WHERE Path = \'" + \
-    path + \
-    "\'")
+    "SELECT COUNT(*) FROM History WHERE Path = ?", [path])
   count = c.fetchone()[0]
 
   # [[[ 3. Unlock ]]]
