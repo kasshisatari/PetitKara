@@ -107,9 +107,9 @@ def AddTop(
   idx = lastIdx
   if not lastIdx is None:
     while idx > 0:
-      c.execute("update Book " +
-        "set Idx = " + str(idx+1) + " " +
-        "where Idx = " + str(idx))
+      c.execute( \
+        "update Book set Idx = ? where Idx = ?", \
+        [idx+1, idx])
       idx = idx - 1
 
   # [[[ 5. Insert Last Record ]]]
@@ -207,8 +207,9 @@ def Delete(
   c.execute("begin")
  
   # [[[ 2. Check Exist ]]]
-  c.execute("select * from Book " +
-    "where BookId = " + str(bookId))
+  c.execute( \
+    "select * from Book where BookId = ?", \
+    [bookId])
   if c.fetchone() is None:
     # < No Record >
     conn.rollback()
@@ -216,8 +217,9 @@ def Delete(
     return False
 
   # [[[ 3. Get Delete Idx ]]]
-  c.execute("select Idx from Book " +
-    "where BookId = " + str(bookId))
+  c.execute( \
+    "select Idx from Book where BookId = ?", \
+    [bookId])
   deleteIdx = int(c.fetchone()[0])
 
   # [[[ 4. Get Max Idx ]]]
@@ -225,15 +227,16 @@ def Delete(
   maxIdx = int(c.fetchone()[0])
 
   # [[[ 5. Delete Record ]]]
-  c.execute("delete from Book " +
-    "where BookId = " + str(bookId))
+  c.execute( \
+    "delete from Book where BookId = ?", \
+    [bookId])
 
   # [[[ 6. Update Idx after Delete Record ]]]
   updateIdx = deleteIdx + 1
   while updateIdx <= maxIdx:
-    c.execute("update Book set " +
-      "Idx = " + str(updateIdx-1) + " " +
-      "where Idx = " + str(updateIdx))
+    c.execute( \
+      "update Book set Idx = ? where Idx = ?", \
+      [updateIdx-1, updateIdx])
     updateIdx = updateIdx + 1
 
   # [[[ 7. UnLock ]]] 
@@ -275,11 +278,9 @@ def MoveDown(
 
   # [[[ 2. Get Previous BookId ]]]
   c.execute( \
-    "SELECT BookId, MIN(Idx) FROM Book " + \
-    "WHERE IDX > " + \
-    "(SELECT Idx FROM Book WHERE BookId = " + \
-    bookId + \
-    ") ORDER BY Idx")
+    "SELECT BookId, MIN(Idx) FROM Book WHERE IDX > " + \
+    "(SELECT Idx FROM Book WHERE BookId = ?) ORDER BY Idx", \
+    [bookId])
   prevBookId = c.fetchone()[0]
   if prevBookId is None:
     # < BookId is Top or Nothing >
@@ -307,11 +308,9 @@ def MoveUp(
 
   # [[[ 2. Get Previous BookId ]]]
   c.execute( \
-    "SELECT BookId, MAX(Idx) FROM Book " + \
-    "WHERE IDX < " + \
-    "(SELECT Idx FROM Book WHERE BookId = " + \
-    bookId + \
-    ") ORDER BY Idx")
+    "SELECT BookId, MAX(Idx) FROM Book WHERE IDX < " + \
+    "(SELECT Idx FROM Book WHERE BookId = ?) ORDER BY Idx", \
+    [bookId])
   prevBookId = c.fetchone()[0]
   if prevBookId is None:
     # < BookId is Top or Nothing >
@@ -343,15 +342,13 @@ def Swap(
   c.execute("begin")
 
   # [[[ 3. Check BookId ]]]
-  c.execute("select Idx from Book " +
-    "where BookId = " + str(srcBookId))
+  c.execute("select Idx from Book where BookId = ?", [srcBookId])
   srcIdx = c.fetchone()
   if srcIdx is None:
     conn.rollback()
     lock.release()
     return False
-  c.execute("select Idx from Book " +
-    "where BookId = " + str(dstBookId))
+  c.execute("select Idx from Book where BookId = ?", [dstBookId])
   dstIdx = c.fetchone()
   if dstIdx is None:
     conn.rollback()
@@ -361,15 +358,12 @@ def Swap(
   dstIdx = dstIdx[0]
 
   # [[[ 4. Update Idx ]]]
-  c.execute("update Book " +
-    "set Idx = " + str(-1) + " " +
-    "where BookId = " + str(dstBookId))
-  c.execute("update Book " +
-    "set Idx = " + str(dstIdx) + " " +
-    "where Bookid = " + str(srcBookId))
-  c.execute("update Book " +
-    "set Idx = " + str(srcIdx) + " " +
-    "where BookId = " + str(dstBookId))
+  c.execute("update Book set Idx = ? where Bookid = ?", \
+    [-1, dstBookId])
+  c.execute("update Book set Idx = ? where Bookid = ?", \
+    [dstIdx, srcBookId])
+  c.execute("update Book set Idx = ? where BookId = ?", \
+    [srcIdx, dstBookId])
  
   # [[[ 5. UnLock ]]]
   conn.commit()
@@ -448,7 +442,7 @@ def ReserveDetail(
   c.execute("begin")
 
   # [[[ 2. Query ]]]
-  for row in c.execute("select * from Book where BookId = " + id):
+  for row in c.execute("select * from Book where BookId = ?", [id]):
     if (1 == row[5]):
       title = row[2]
     else:

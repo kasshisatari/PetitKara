@@ -67,7 +67,9 @@ def Get(
     conn = sqlite3.connect(fileName, check_same_thread=False)
     c = conn.cursor()
   # [[[ 4. Get Directory Name and File Name ]]]
-  c.execute("SELECT DirName, FileName FROM File WHERE FileID = " + str(fileId))
+  c.execute(
+    "SELECT DirName, FileName FROM File WHERE FileID = ?", \
+    [fileId])
   row = c.fetchone()
   # [[[ 5. Unlock ]]]
   lock.release()
@@ -95,6 +97,7 @@ def Count(keywords): # string with <li></li> elements
   sql = 'SELECT COUNT(FileID) FROM File WHERE '
   isMultiKeyword = 0
   keywords = keywords.strip()
+  param = []
   if keywords == "":
     # < All List >
     sql = 'SELECT COUNT(FileID) FROM File'
@@ -104,11 +107,12 @@ def Count(keywords): # string with <li></li> elements
       if 1 == isMultiKeyword:
         sql = sql + " AND "
       sql = sql + \
-        '(DirName LIKE \'%' + keyword + \
-        '%\' OR FileName LIKE \'%' + keyword + '%\')'
+        '(DirName LIKE ? OR FileName LIKE ?)'
       isMultiKeyword = 1
+      param = param \
+        + [ "%" + keyword + "%" , "%" + keyword + "%" ]
   # [[ 4.2. Query ]]
-  for row in c.execute(sql):
+  for row in c.execute(sql,param):
     count = row[0]
   # [[[ 5. Unlock ]]]
   lock.release()
@@ -152,6 +156,7 @@ def Search(keywords,user,page): # string with <li></li> elements
   sql = 'SELECT FileID, FileName, DirName FROM File WHERE '
   isMultiKeyword = 0
   keywords = keywords.strip()
+  param = []
   if keywords == "":
     # < All List >
     sql = 'SELECT FileID, FileName, DirName FROM File'
@@ -161,13 +166,14 @@ def Search(keywords,user,page): # string with <li></li> elements
       if 1 == isMultiKeyword:
         sql = sql + " AND "
       sql = sql + \
-        '(DirName LIKE \'%' + keyword + \
-        '%\' OR FileName LIKE \'%' + keyword + '%\')'
+        '(DirName LIKE ? OR FileName LIKE ?)'
       isMultiKeyword = 1
+      param = param \
+        + [ "%" + keyword + "%" , "%" + keyword + "%" ]
   sql = sql + " LIMIT " + str(limit)
   sql = sql + " OFFSET " + str(limit * (int(page)-1))
   # [[ 4.2. Query ]]
-  for row in c.execute(sql):
+  for row in c.execute(sql,param):
     filePath = os.path.join(row[2],row[1])
     if 0 != History.Count(filePath):
       # < Already Play >
@@ -211,11 +217,11 @@ def Detail(
   # [[[ 3. Make <li></li> List ]]]
   list = '' # return html string
   # [[ 3.1. Prepare SQL statement ]]
-  sql = 'SELECT FileID, DirName, FileName, Size FROM File WHERE FileID = ' + no
+  sql = 'SELECT FileID, DirName, FileName, Size FROM File WHERE FileID = ?'
   # [[ 3.2. Query ]]
   size = 0
   filePath = ''
-  for row in c.execute(sql):
+  for row in c.execute(sql, [no]):
     size = row[3]
     filePath = os.path.join(row[1],row[2])
 
@@ -245,10 +251,10 @@ def CheckFile(no): # Exist(True) / Not Exist(False)
     conn = sqlite3.connect(fileName, check_same_thread=False)
     c = conn.cursor()
   # [[[ 3. Prepare SQL statement ]]]
-  sql = 'SELECT FileID, DirName, FileName, Size FROM File WHERE FileID = ' + no
+  sql = 'SELECT FileID, DirName, FileName, Size FROM File WHERE FileID = ?'
   # [[[ 4. Query ]]]
   filePath = ''
-  for row in c.execute(sql):
+  for row in c.execute(sql, [no]):
     filePath = os.path.join(row[1],row[2])
   # [[[ 5. Unlock ]]]
   lock.release()
