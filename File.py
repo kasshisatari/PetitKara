@@ -130,6 +130,47 @@ def Page(keywords, user): # string with <a></a> elements
       keywords + "\" rel=\"external\">" + str(i+1) + "</a>"
   return list
 
+# Navigate Link
+def Navi(keywords, user, page): # string with <a></a> elements
+  # [[[ 1. Get Page Count ]]]
+  count = int(Count(keywords))
+
+  # [[[ 2. Get Page Numbers ]]]
+  maxPage = int((count - 1) / limit + 1)
+  prevPage = int(page) - 1
+  nextPage = int(page) + 1
+
+  # [[[ 3. Return Navigate Link ]]]
+  if 0 == prevPage and \
+     maxPage + 1 == nextPage:
+    # < No Next and Previous Page >
+    return ""
+  elif 0 == prevPage:
+    # < No Previous Page >
+    return  \
+      u"<a href=\"list?user=" + user + \
+      u"&page=" + str(nextPage) + \
+      u"&keyword=" + keywords + \
+      u"\" rel=\"external\">次へ</a><br>"
+  elif maxPage + 1 == nextPage:
+    # < No Next Page >
+    return \
+      u"<a href=\"list?user=" + user + \
+      u"&page=" + str(prevPage) + \
+      u"&keyword=" + keywords + \
+      u"\" rel=\"external\">前へ</a><br>"
+  else:
+    # < Previous and Next Page >
+    return \
+      u"<a href=\"list?user=" + user + \
+      u"&page=" + str(prevPage) + \
+      u"&keyword=" + keywords + \
+      u"\" rel=\"external\">前へ</a>" + \
+      u"<a href=\"list?user=" + user + \
+      u"&page=" + str(nextPage) + \
+      u"&keyword=" + keywords + \
+      u"\" rel=\"external\" class=\"ui-btn-right\">次へ</a><br>"
+
 # Search keyword
 def Search(keywords,user,page): # string with <li></li> elements
   global lock
