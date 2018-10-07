@@ -36,6 +36,39 @@ lock = threading.Lock() # Lock Object
 conn = None             # SQLite Connection
 c = None                # SQLite Cursor
 
+# Get FileId
+def GetFileId(
+      dirName, # String(In): Full path
+      filename # String(In): File Name
+    ): # String(FileId) / None
+  global conn
+  global lock
+  global c
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Check DB File ]]]
+  if not os.path.exists("./" + fileName):
+    # < File not Exists >
+    lock.release()
+    return None
+
+  # [[[ 3. Prepare SQLite ]]]
+  if None is conn:
+    conn = sqlite3.connect(fileName, check_same_thread=False)
+    c = conn.cursor()
+
+  # [[[ 4. Get FileId ]]]
+  c.execute( \
+    "SELECT FileId FROM File WHERE DirName = ? AND FileName = ?", \
+    [dirName, filename])
+  fileId = c.fetchone()[0]
+
+  # [[[ 5. Unlock ]]]
+  lock.release()
+
+  return fileId
+
 # Get movie file path
 def recFiles(directories): # string for filepath
   for root, dirs, files in os.walk(directories):

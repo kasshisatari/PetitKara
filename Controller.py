@@ -41,6 +41,7 @@ import qrcode
 import VideoInfo
 import HDMI
 import Video
+import Favorite
 
 path = None     # playing file path
 user = None     # playing file user
@@ -93,6 +94,54 @@ def console():
   # [[[ 2. Update View ]]]
   return template('console')
 
+# Favorites View
+@app.get("/favorites")
+def favorites():
+  # [[[ 1. Update View ]]]
+  return template( \
+    'favorites', \
+    name = request.query.user)
+
+# Favorite View
+@app.get("/favorite")
+def favorite():
+  # [[[ 1. Get FileId for Book ]]]
+  dirName, fileName = \
+    Favorite.Get( \
+      request.query.user,
+      request.query.idx)
+  fileId = File.GetFileId(dirName, fileName)
+
+  # [[[ 2. Update View ]]]
+  if None is not fileId:
+    # < Exist Video File >
+    return template( \
+      'favorite', \
+      name = request.query.user, \
+      idx = request.query.idx, \
+      id = fileId)
+  else:
+    # < Not Exist Video File >
+    return template( \
+      'nofavorite', \
+      name = request.query.user, \
+      idx = request.query.idx)
+
+# Bookmark
+@app.get("/bookmark")
+def bookmark():
+  # [[[ 1. Get File Path ]]]
+  dirName, fileName = File.Get(request.query.fileId)
+
+  # [[[ 2. Add Favorite ]]]
+  Favorite.Add(dirName, fileName, request.query.user)
+
+  # [[[ 3. Redirect Search View ]]]
+  redirect( \
+    "/list?user=" + request.query.user + \
+    "&keyword=" + request.query.keyword + \
+    "&page=" + request.query.page)
+
 # Shutdown OS
 @app.get("/shutdown")
 def shutdown():
@@ -121,6 +170,7 @@ def current():
       page = request.query.page, \
       fileId = request.query.fileId, \
       bookId = request.query.bookId, \
+      idx = request.query.idx, \
       pause = u"再開" if pause is True else u"一時停止")
   else:
     # < Playing >
@@ -202,9 +252,13 @@ def audio():
     "&fileId=" + request.query.fileId + \
     "&bookId=" + request.query.bookid)
 
+# Rewind Video
 @app.get("/rew")
 def rew():
+  # [[[ 1. Rewind Video ]]]
   Video.Rewind()
+
+  # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
     "/current?user=" + request.query.user + \
     "&back=" + request.query.back + \
@@ -213,9 +267,13 @@ def rew():
     "&fileId=" + request.query.fileId + \
     "&bookId=" + request.query.bookid)
 
+# Fast Forward Video
 @app.get("/ff")
 def ff():
+  # [[[ 1. Fast Forward Video ]]]
   Video.FastForward()
+
+  # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
     "/current?user=" + request.query.user + \
     "&back=" + request.query.back + \
@@ -224,11 +282,15 @@ def ff():
     "&fileId=" + request.query.fileId + \
     "&bookId=" + request.query.bookid)
 
+# Volume Down
 @app.get("/down")
 def down():
   global vol
+  # [[[ 1. Volume Down ]]]
   vol = vol - volStep
   Video.DownVolume()
+
+  # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
     "/current?user=" + request.query.user + \
     "&back=" + request.query.back + \
@@ -237,11 +299,15 @@ def down():
     "&fileId=" + request.query.fileId + \
     "&bookId=" + request.query.bookid)
 
+# Volume Up
 @app.get("/up")
 def up():
   global vol
+  # [[[ 1. Volume Up ]]]
   vol = vol + volStep
   Video.UpVolume()
+
+  # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
     "/current?user=" + request.query.user + \
     "&back=" + request.query.back + \
@@ -296,7 +362,8 @@ def insert():
     VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
   redirect( \
-    "/list?user=" + request.query.user + \
+    "/" + request.query.back + \
+    "?user=" + request.query.user + \
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page)
 
@@ -305,6 +372,17 @@ def playlist():
   return template( \
     'playlist', \
     name = request.query.user)
+
+# Delete Bookmark
+@app.get("/forget")
+def forget():
+
+  # [[[ 1. Delete Bookmark ]]]
+  Favorite.Delete(request.query.user, request.query.idx)
+
+  # [[[ 2. Redirect Favorite View ]]]
+  redirect( \
+    "/favorites?user=" + request.query.user)
 
 @app.get("/delete")
 def delete():
@@ -350,7 +428,8 @@ def add():
     VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
   redirect( \
-    "/list?user=" + request.query.user + \
+    "/" + request.query.back + \
+    "?user=" + request.query.user + \
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page)
 
