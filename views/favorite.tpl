@@ -20,9 +20,9 @@ $.mobile.pushStateEnabled = false;
 <div data-role="page" data-title="PetitKara">
 
   <div data-role="header">
-  <a href="list?user={{!name}}&keyword={{!keyword}}&page={{!page}}" rel="external">戻る</a>
+  <a href="favorites?user={{!name}}" rel="external">戻る</a>
     <h1>{{!name}}</h1>
-    <a href="current?user={{!name}}&back=detail&fileId={{!id}}&keyword={{!keyword}}&page={{!page}}" rel="external">状態</a>
+    <a href="current?user={{!name}}&back=favorite&idx={{!idx}}" rel="external">状態</a>
   </div>
 
   <div role="main" class="ui-content">
@@ -36,11 +36,25 @@ $.mobile.pushStateEnabled = false;
       <ul>
         <li><a href="#add" data-rel="dialog">予約</a></li>    
         <li><a href="#insertcheck" data-rel="dialog">割り込み予約</a></li>    
-        <li><a href="#favorite" data-rel="dialog">お気に入り追加</a></li>
+        <li><a href="#delete" data-rel="dialog">削除</a></li>    
       </ul>
     </div>
   </div>
 
+</div>
+
+<div id="delete" data-role="page">
+  <div data-role="header"><h1>確認</h1></div>
+  <div data-role="content">
+削除しますか。
+    <form method="GET" action="forget" data-ajax="false">
+      <input id="user" name="user" type="hidden" value="{{!name}}" />
+      <input id="idx" name="idx" type="hidden" value="{{!idx}}" />
+      <input type="submit" value="はい" />
+      <a data-role="button" href="/" data-rel="back">いいえ</a>
+    </form>
+  </div>
+  <div data-role="footer"></div>
 </div>
 
 <div id="add" data-role="page">
@@ -51,9 +65,7 @@ $.mobile.pushStateEnabled = false;
       <input id="comment" name="comment" value="" type="text" />
       <input id="user" name="user" type="hidden" value="{{!name}}" />
       <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
-      <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
-      <input id="back" name="back" type="hidden" value="list" />
-      <input id="page" name="page" type="hidden" value="{{!page}}" />
+      <input id="back" name="back" type="hidden" value="favorites" />
       <label>
         <input id="secret" name="secret" type="checkbox" />非公開
       </label>
@@ -72,28 +84,10 @@ $.mobile.pushStateEnabled = false;
       <input id="comment" name="comment" value="" type="text" />
       <input id="user" name="user" type="hidden" value="{{!name}}" />
       <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
-      <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
-      <input id="back" name="back" type="hidden" value="list" />
-      <input id="page" name="page" type="hidden" value="{{!page}}" />
+      <input id="back" name="back" type="hidden" value="favorites" />
       <label>
         <input id="secret" name="secret" type="checkbox" />非公開
       </label>
-      <input type="submit" value="はい" />
-      <a data-role="button" href="/" data-rel="back">いいえ</a>
-    </form>
-  </div>
-  <div data-role="footer"></div>
-</div>
-
-<div id="favorite" data-role="page">
-  <div data-role="header"><h1>確認</h1></div>
-  <div data-role="content">
-お気に入りに追加しますか。
-    <form method="GET" action="bookmark" data-ajax="false">
-      <input id="user" name="user" type="hidden" value="{{!name}}" />
-      <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
-      <input id="keyword" name="keyword" type="hidden" value="{{!keyword}}" />
-      <input id="page" name="page" type="hidden" value="{{!page}}" />
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>

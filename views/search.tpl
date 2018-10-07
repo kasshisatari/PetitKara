@@ -39,6 +39,7 @@ $.mobile.pushStateEnabled = false;
       <ul>
         <li><a href="playlist?user={{!name}}" rel="external">予約一覧</a></li>
         <li><a href="history?user={{!name}}" rel="external">履歴一覧</a></li>
+        <li><a href="favorites?user={{!name}}" rel="external">お気に入り一覧</a></li>
       </ul>
     </div>
   </div>
