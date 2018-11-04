@@ -187,6 +187,7 @@ def current():
       page = request.query.page, \
       fileId = request.query.fileId, \
       bookId = request.query.bookId, \
+      idx = request.query.idx, \
       vol = vol/100)
 
 # Stop Video
