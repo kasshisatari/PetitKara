@@ -34,7 +34,7 @@ $.mobile.pushStateEnabled = false;
     <a href="#reset" data-role="button" data-rel="dialog">リセット</a>
     <img src="../static/toppage.png">
     </div>
-    <div data-role="footer">Version 1.3.1</div>
+    <div data-role="footer">Version 1.3.2</div>
   </div>
 
   <div data-role="page" id="refresh">

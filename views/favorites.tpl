@@ -22,7 +22,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="header">
     <a href="search?user={{!name}}" rel="external">戻る</a>
     <h1>お気に入り</h1>
-    <a href="current?user={{!name}}&back=favorite" rel="external">状態</a>
+    <a href="current?user={{!name}}&back=favorites" rel="external">状態</a>
   </div>
 
   <div role="main" class="ui-content">
