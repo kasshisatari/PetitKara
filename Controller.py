@@ -199,10 +199,11 @@ def stop():
   # [[[ 2. Redirect Previous View ]]]
   redirect( \
     request.query.back + \
-    "?name=" + request.query.user + \
+    "?user=" + request.query.user + \
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookId)
 
 # Pause Video
@@ -236,6 +237,7 @@ def suspend():
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookid)
 
 # Switch Audio of Video
@@ -251,6 +253,7 @@ def audio():
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookid)
 
 # Rewind Video
@@ -266,6 +269,7 @@ def rew():
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookid)
 
 # Fast Forward Video
@@ -281,6 +285,7 @@ def ff():
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookid)
 
 # Volume Down
@@ -298,6 +303,7 @@ def down():
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookid)
 
 # Volume Up
@@ -315,6 +321,7 @@ def up():
     "&keyword=" + request.query.keyword + \
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
+    "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookid)
 
 @app.route('/static/:path#.+#', name='static')
