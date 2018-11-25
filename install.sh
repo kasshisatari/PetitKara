@@ -50,7 +50,7 @@ dhcp-range=192.168.9.50,192.168.9.150,12h
 wq
 EOF
 
-sudo ed /home/pi/.config/lxsession/LXDE-pi/autostart << EOF
+sudo ed /etc/xdg/lxsession/LXDE-pi/autostart << EOF
 $
 a
 @xset s off
