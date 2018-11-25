@@ -47,7 +47,7 @@ path = None     # playing file path
 user = None     # playing file user
 comment = None  # playing file comment
 duration = None # playing file duration
-vol = -2100     # current volume
+vol = -4500     # current volume
 volStep = 300   # 0.3dB
 app = Bottle()  # bottle instance
 pause = False   # pause
@@ -481,6 +481,7 @@ def reset():
   Book.Reset()
   File.Delete()
   History.Delete()
+  Favorite.Reset()
   redirect("/")
 
 @app.get("/initHistory")

@@ -47,7 +47,7 @@ def init(): # None
     "WHERE type='table' AND name='Favorite'")
   if c.fetchone() is None:
     # < No Table >
-    # [ 1.2.1. Create History Table ]
+    # [ 1.2.1. Create Favorite Table ]
     c.execute("CREATE TABLE [Favorite] " + 
       "(" +
       "[DirName] TEXT NOT NULL, " +
@@ -171,7 +171,7 @@ def FavoriteList(
       "</li>"
   return list
 
-# Delete History
+# Delete Favorite
 def Delete(
       user, # String(In): User
       idx   # String(In): Idx
@@ -190,6 +190,22 @@ def Delete(
     [user,idx])
 
   # [[[ 3. Unlock ]]]
+  lock.release()
+
+# Reset Favorite
+def Reset(): # None
+  global lock
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Delete Favorite File ]]]
+  if os.path.exists("./" + fileName):
+    os.remove(fileName)
+
+  # [[[ 3. Initialize Favorite File ]]]
+  init()
+
+  # [[[ 4. Unlock ]]]
   lock.release()
 
 init()
