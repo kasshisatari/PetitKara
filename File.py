@@ -174,8 +174,9 @@ def Navi(keywords, user, page): # string with <a></a> elements
   nextPage = int(page) + 1
 
   # [[[ 3. Return Navigate Link ]]]
-  if 0 == prevPage and \
-     maxPage + 1 == nextPage:
+  if 0 == count or \
+     (0 == prevPage and \
+     maxPage + 1 == nextPage):
     # < No Next and Previous Page >
     return ""
   elif 0 == prevPage:
