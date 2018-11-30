@@ -40,7 +40,7 @@ import Address
 import qrcode
 import VideoInfo
 import HDMI
-import Video
+from Raspi import Video
 import Favorite
 
 path = None     # playing file path
@@ -51,6 +51,7 @@ vol = -4500     # current volume
 volStep = 300   # 0.3dB
 app = Bottle()  # bottle instance
 pause = False   # pause
+video = None    # video instance
 
 # Monitor View
 @app.get("/console")
@@ -64,7 +65,7 @@ def console():
   # [[[ 1. Update Playing Video ]]] 
   if 0 != len(Book.List()) and False is pause:
     # < Can Play >
-    if False is Video.CheckPlaying():
+    if False is video.CheckPlaying():
       # < Not Playing >
       # [[ 1.1. Get and Update First Reservation ]]
       bookList = Book.List()[0]
@@ -77,7 +78,7 @@ def console():
       if 0 == dummy:
         # < Not Dummy >
         # [ 1.2.1. Play Video ]
-        Video.Open(path, vol)
+        video.Open(path, vol)
         # [ 1.2.2. Add History ]
         History.Add(path, user, comment)
         # [ 1.2.3. Update pause status for playing ]
@@ -158,7 +159,7 @@ def restart():
 @app.get("/current")
 def current():
   # [[[ 1. Update View ]]]
-  if False is Video.CheckPlaying():
+  if False is video.CheckPlaying():
     # < Not Playing >
     # [[ 1.1. Not Playing View ]]]
     return template( \
@@ -194,7 +195,7 @@ def current():
 @app.get("/stop")
 def stop():
   # [[[ 1. Stop Video ]]]
-  Video.Stop()
+  video.Stop()
 
   # [[[ 2. Redirect Previous View ]]]
   redirect( \
@@ -211,17 +212,17 @@ def stop():
 def suspend():
   global pause
   # [[[ 1. Switch HDMI Signal ]]]
-  if True is pause and False is Video.CheckPlaying():
+  if True is pause and False is video.CheckPlaying():
     # < Pausing >
     HDMI.Switch()
 
   # [[[ 2. Pause Video ]]]
-  Video.Pause()
+  video.Pause()
 
   # [[[ 3. Switch HDMI Signal to Other Component ]]]
   if False is pause:
     # < Not Pausing >
-    if False is Video.CheckPlaying():
+    if False is video.CheckPlaying():
       # < Not Playing >
       HDMI.Switch()
     # [[ 3.1. Update Pause Status Not Pausing -> Pausing ]]
@@ -244,7 +245,7 @@ def suspend():
 @app.get("/audio")
 def audio():
   # [[[ 1. Switch Audio ]]]
-  Video.SwitchAudio()
+  video.SwitchAudio()
 
   # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
@@ -260,7 +261,7 @@ def audio():
 @app.get("/rew")
 def rew():
   # [[[ 1. Rewind Video ]]]
-  Video.Rewind()
+  video.Rewind()
 
   # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
@@ -276,7 +277,7 @@ def rew():
 @app.get("/ff")
 def ff():
   # [[[ 1. Fast Forward Video ]]]
-  Video.FastForward()
+  video.FastForward()
 
   # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
@@ -294,7 +295,7 @@ def down():
   global vol
   # [[[ 1. Volume Down ]]]
   vol = vol - volStep
-  Video.DownVolume()
+  video.DownVolume()
 
   # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
@@ -312,7 +313,7 @@ def up():
   global vol
   # [[[ 1. Volume Up ]]]
   vol = vol + volStep
-  Video.UpVolume()
+  video.UpVolume()
 
   # [[[ 2. Redirect Remote-Controller View ]]]
   redirect( \
@@ -491,6 +492,7 @@ def refresh():
 
 # [[[ 1. Initialize HDMI Signal Switcher ]]]
 HDMI.init()
+video = Video.Video()
 
 # [[[ 2. Make QR-Code ]]]
 img = qrcode.make("http://"+Address.Getwlan0()+":8080/")
