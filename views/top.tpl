@@ -32,9 +32,10 @@ $.mobile.pushStateEnabled = false;
     <a href="#shutdown" data-role="button" data-rel="dialog">シャットダウン</a>
     <a href="#restart" data-role="button" data-rel="dialog">再起動</a>
     <a href="#reset" data-role="button" data-rel="dialog">リセット</a>
+    <a href="#attention" data-role="button" data-rel="dialog">注意事項</a>
     <img src="../static/toppage.png">
     </div>
-    <div data-role="footer">Version 1.3.6</div>
+    <div data-role="footer">Version 1.3.7</div>
   </div>
 
   <div data-role="page" id="refresh">
@@ -93,6 +94,20 @@ $.mobile.pushStateEnabled = false;
         <a data-role="button" href="reset" rel="external">はい</a>
 	<a data-role="button" href="/" data-rel="back">いいえ</a>
       </form>
+    </div>
+    <div data-role="footer"></div>
+  </div>
+
+  <div data-role="page" id="attention">
+    <div data-role="header"><h1>注意事項</h1></div>
+    <div data-role="content">
+	    カラオケ店等にてコンセントを繋いで電源を使用する場合、店側の許可を得てください。刑法245条に抵触する『電気窃盗罪』が成立します。<br>
+	    再生する動画像は営利目的への利用、インターネットに公開する、公衆の場での利用等、著作権法第38条第1項に抵触する場合、権利者の許諾を得てください。<br>
+	    PetitKaraはMIT Licenseです。 以下に定める条件に従い、本ソフトウェアおよび関連文書のファイル（以下「ソフトウェア」）の複製を取得するすべての人に対し、ソフトウェアを無制限に扱うことを無償で許可します。これには、ソフトウェアの複製を使用、複写、変更、結合、掲載、頒布、サブライセンス、および/または販売する権利、およびソフトウェアを提供する相手に同じことを許可する権利も無制限に含まれます。<br><br>
+
+上記の著作権表示および本許諾表示を、ソフトウェアのすべての複製または重要な部分に記載するものとします。<br><br>
+
+ソフトウェアは「現状のまま」で、明示であるか暗黙であるかを問わず、何らの保証もなく提供されます。ここでいう保証とは、商品性、特定の目的への適合性、および権利非侵害についての保証も含みますが、それに限定されるものではありません。 作者または著作権者は、契約行為、不法行為、またはそれ以外であろうと、ソフトウェアに起因または関連し、あるいはソフトウェアの使用またはその他の扱いによって生じる一切の請求、損害、その他の義務について何らの責任も負わないものとします。
     </div>
     <div data-role="footer"></div>
   </div>
