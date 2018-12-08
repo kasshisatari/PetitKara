@@ -28,13 +28,14 @@
 import threading
 import sqlite3
 import os
-import VideoInfo
+from Raspi import VideoInfo
 import History
 fileName = "file.db"    # DB File Name  
 limit = 20              # Max Search Record Per Page
 lock = threading.Lock() # Lock Object
 conn = None             # SQLite Connection
 c = None                # SQLite Cursor
+videoInfo = None        # videoInfo instance
 
 # Get FileId
 def GetFileId(
@@ -280,6 +281,7 @@ def Detail(
   global lock
   global conn
   global c
+  global videoInfo
 
    # [[[ 1. Lock ]]]
   lock.acquire()
@@ -305,10 +307,12 @@ def Detail(
 
   # [[[ 5. Make Tag ]]]
   list = filePath + "<br>" + "{:,}".format(size) + "[Byte]<br>"
-  if (None is VideoInfo.GetDuration(filePath)):
+  if None is videoInfo:
+    videoInfo = VideoInfo.VideoInfo()
+  if (None is videoInfo.GetDuration(filePath)):
     list = u"動画が見つかりません。" + "<br>" + u"曲情報を更新してください。"
   else:
-    list = list + VideoInfo.GetDuration(filePath)
+    list = list + videoInfo.GetDuration(filePath)
     # [[ 5.1. History Count ]]
     list = list + "<br>" + str(History.Count(filePath)) + u"回"
 

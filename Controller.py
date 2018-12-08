@@ -38,20 +38,22 @@ import History
 import File
 import Address
 import qrcode
-import VideoInfo
+from Raspi import VideoInfo
 import HDMI
 from Raspi import Video
 import Favorite
 
-path = None     # playing file path
-user = None     # playing file user
-comment = None  # playing file comment
-duration = None # playing file duration
-vol = -4500     # current volume
-volStep = 300   # 0.3dB
-app = Bottle()  # bottle instance
-pause = False   # pause
-video = None    # video instance
+path = None      # playing file path
+user = None      # playing file user
+comment = None   # playing file comment
+duration = None  # playing file duration
+audioNum = 0     # playing file audio stream
+vol = -4500      # current volume
+volStep = 300    # 0.3dB
+app = Bottle()   # bottle instance
+pause = False    # pause
+video = None     # video instance
+videoInfo = None # videoInfo instance
 
 # Monitor View
 @app.get("/console")
@@ -61,6 +63,7 @@ def console():
   global comment
   global pause
   global duration
+  global audioNum
 
   # [[[ 1. Update Playing Video ]]] 
   if 0 != len(Book.List()) and False is pause:
@@ -73,12 +76,13 @@ def console():
       user = bookList[3]
       comment = bookList[4]
       dummy = bookList[7]
-      duration = VideoInfo.GetDuration(path)
+      duration = videoInfo.GetDuration(path)
+      audioNum = videoInfo.GetAudioNum(path)
       # [[ 1.2. Check Dummy ]]
       if 0 == dummy:
         # < Not Dummy >
         # [ 1.2.1. Play Video ]
-        video.Open(path, vol)
+        video.Open(path, vol, audioNum)
         # [ 1.2.2. Add History ]
         History.Add(path, user, comment)
         # [ 1.2.3. Update pause status for playing ]
@@ -368,7 +372,7 @@ def insert():
     request.query.user, \
     request.query.comment, \
     visible, \
-    VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
+    videoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
   redirect( \
     "/" + request.query.back + \
@@ -434,7 +438,7 @@ def add():
     request.query.user, \
     request.query.comment, \
     visible, \
-    VideoInfo.GetDuration(os.path.join(dirName,fileName)), \
+    videoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
   redirect( \
     "/" + request.query.back + \
@@ -493,6 +497,7 @@ def refresh():
 # [[[ 1. Initialize HDMI Signal Switcher ]]]
 HDMI.init()
 video = Video.Video()
+videoInfo = VideoInfo.VideoInfo()
 
 # [[[ 2. Make QR-Code ]]]
 img = qrcode.make("http://"+Address.Getwlan0()+":8080/")

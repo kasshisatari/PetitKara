@@ -16,7 +16,8 @@ sudo ed /etc/dhcpcd.conf << EOF
 $
 a
 interface wlan0
-static ip=address=192.168.9.1/24
+  static ip_address=192.168.9.1/24
+  nohook wpa_supplicant
 .
 wq
 EOF
