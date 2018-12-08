@@ -156,7 +156,7 @@ class Video:
     # [[[ 3. Set D-Bus Address to Environment Variable ]]]
     self.SetDBusEnvironment()
     # [[[ 4. Call for Seek ]]]
-    subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:-1'.split())
+    subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:1'.split())
 
   # Rewind
   def Rewind(self) : # None
