@@ -59,7 +59,7 @@ class Video:
     self.stopThread = None # stop thread
 
   # Open and Playing Video
-  def Open(self,path,vol) : # None
+  def Open(self,path,vol,audioNum) : # None
     # [[[ 1. Make playing command ]]]
     command = \
       self.start \
@@ -70,6 +70,9 @@ class Video:
       command, \
       shell=True, \
       stdin=subprocess.PIPE)
+    # [[[ 3. Initialize Audio Stream Switching ]]]
+    self.audioNum = audioNum
+    self.audioStream = 0
 
   # Check playing is done
   def CheckPlaying(self) : # Bool True(Playing) / False(Stop)
@@ -132,14 +135,28 @@ class Video:
 
   # Switch Audio
   def SwitchAudio(self) : # None
+    if 1 == self.audioNum:
+      return
+    self.audioStream = self.audioStream + 1
     try:
       # < omxplayer is running >
-      # [[[ 1. next audio stream ]]]
-      self.proc.stdin.write(b"k")
+      # [[[ 1. change audio stream ]]]
+      if self.audioNum == self.audioStream:
+        # [[ 1.1. back audio stream ]]
+        self.audioStream = 0
+        for num in range(self.audioNum - 1):
+          self.proc.stdin.write(b"j")
+      else:
+        # [[ 1.2. next audio stream ]]
+        self.proc.stdin.write(b"k")
       # [[[ 2. Flush stdin ]]]
       self.proc.stdin.flush()
     except:
       pass
+    # [[[ 3. Set D-Bus Address to Environment Variable ]]]
+    self.SetDBusEnvironment()
+    # [[[ 4. Call for Seek ]]]
+    subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:-1'.split())
 
   # Rewind
   def Rewind(self) : # None
