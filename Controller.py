@@ -459,6 +459,11 @@ def dummy():
     "/search?user=" + request.query.user + \
     "&keyword=" + request.query.keyword)
 
+@app.get("/preview")
+def preview():
+  dirName, fileName = File.Get(request.query.fileId)
+  return static_file(fileName, root=dirName)
+
 @app.get("/detail")
 def detail():
   if (True is File.CheckFile(request.query.fileId)):
