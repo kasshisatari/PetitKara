@@ -31,6 +31,10 @@ $.mobile.pushStateEnabled = false;
 {{!list}}
   </div>
 
+  <center>
+    <video src="preview?fileId={{!id}}" width=300 controls muted controlslist="nodownload"></video>
+  </center>
+
   <div data-role="footer">
     <div data-role="navbar">
       <ul>
