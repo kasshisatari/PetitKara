@@ -35,7 +35,7 @@ $.mobile.pushStateEnabled = false;
     <a href="#attention" data-role="button" data-rel="dialog">注意事項</a>
     <img src="../static/toppage.png">
     </div>
-    <div data-role="footer">Version 1.3.8</div>
+    <div data-role="footer">Version 1.3.9</div>
   </div>
 
   <div data-role="page" id="refresh">
@@ -67,8 +67,17 @@ $.mobile.pushStateEnabled = false;
     <div data-role="content">
 シャットダウンします。よろしいでしょうか。
       <form>
-        <a data-role="button" href="shutdown" rel="external">はい</a>
+        <a data-role="button" href="#" rel="external" id="shutdown-target">はい</a>
 	<a data-role="button" href="/" data-rel="back">いいえ</a>
+        <script>
+          $('#shutdown-target').click(function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "shutdown");
+            xhr.send();
+            window.open('/', '_self').close();
+            return false;
+          });
+        </script>
       </form>
     </div>
     <div data-role="footer"></div>
@@ -79,8 +88,17 @@ $.mobile.pushStateEnabled = false;
     <div data-role="content">
 再起動します。よろしいでしょうか。
       <form>
-        <a data-role="button" href="restart" rel="external">はい</a>
+        <a data-role="button" href="#" rel="external" id="restart-target">はい</a>
 	<a data-role="button" href="/" data-rel="back">いいえ</a>
+        <script>
+          $('#restart-target').click(function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "restart");
+            xhr.send();
+            window.open('/', '_self').close();
+            return false;
+          });
+        </script>
       </form>
     </div>
     <div data-role="footer"></div>
