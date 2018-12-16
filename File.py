@@ -246,7 +246,7 @@ def Search(keywords,user,page): # string with <li></li> elements
       isMultiKeyword = 1
       param = param \
         + [ "%" + keyword + "%" , "%" + keyword + "%" ]
-  sql = sql + " LIMIT " + str(limit)
+  sql = sql + " ORDER BY FileName ASC LIMIT " + str(limit)
   sql = sql + " OFFSET " + str(limit * (int(page)-1))
   # [[ 4.2. Query ]]
   for row in c.execute(sql,param):
