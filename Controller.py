@@ -58,6 +58,11 @@ videoInfo = None # videoInfo instance
 # Monitor View
 @app.get("/console")
 def console():
+  return template('console')
+
+# Play Video
+@app.get("/play")
+def console():
   global path
   global user
   global comment
@@ -95,9 +100,6 @@ def console():
         pause = True
       # [[ 1.3. Delete Playing Book ]]
       Book.Delete(bookList[0])
-
-  # [[[ 2. Update View ]]]
-  return template('console')
 
 # Favorites View
 @app.get("/favorites")
@@ -385,6 +387,22 @@ def playlist():
   return template( \
     'playlist', \
     name = request.query.user)
+
+@app.get("/playlist/json")
+def playlist():
+  list = '['
+  firstLine = True
+  for row in Book.List():
+    if False == firstLine:
+      list = list + ","
+    firstLine = False
+    list = list + "{\"user\":\"" + row[3] + "\","
+    if 1 == row[5]:
+      list = list + "\"song\":\"" + os.path.basename(row[2]) + "\","
+    else:
+      list = list + u"\"song\":\"非公開\","
+    list = list + "\"comment\":\"" + row[4] + "\"}"
+  return list + "]"
 
 # Delete Bookmark
 @app.get("/forget")
