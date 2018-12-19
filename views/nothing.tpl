@@ -24,12 +24,32 @@ $.mobile.pushStateEnabled = false;
   </div>
   <div role="main" class="ui-content">
 再生中の動画はありません。<br>
-音量は{{!vol}}dBです。<br>
+<p id="vol">音量は{{!vol}}dBです。</p><br>
   </div>
   <div data-role="footer">
-    <a href="down?user={{!name}}&back={{!back}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">音量小</a>
-    <a href="up?user={{!name}}&back={{!back}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">音量大</a>
+    <a href="#" id="button-down">音量小</a>
+    <a href="#" id="button-up">音量大</a>
     <a href="pause?user={{!name}}&back={{!back}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">{{!pause}}</a>
+<script>
+  var volFunc = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    $('#vol').text("音量は" + String(json.vol) + "dBです。");
+  }
+  $('#button-down').click(function(){
+    var xhr=new XMLHttpRequest();
+    xhr.addEventListener("load", volFunc);
+    xhr.open("GET","down");
+    xhr.send();
+  });
+  $('#button-up').click(function(){
+    var xhr=new XMLHttpRequest();
+    xhr.addEventListener("load", volFunc);
+    xhr.open("GET","up");
+    xhr.send();
+  });
+
+</script>
   </div>
 </div>
 

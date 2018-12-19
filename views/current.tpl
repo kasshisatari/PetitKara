@@ -25,16 +25,35 @@ $.mobile.pushStateEnabled = false;
   <div role="main" class="ui-content">
 {{!path}}<br>
 {{!duration}}<br>
-音量は{{!vol}}dBです。
+<p id="vol">音量は{{!vol}}dBです。</p>
   </div>
   <div data-role="footer">
-    <a href="down?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">音量小</a>
-    <a href="up?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">音量大</a>
+    <a href="#" id="button-down">音量小</a>
+    <a href="#" id="button-up">音量大</a>
     <a href="rew?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">巻き戻し</a>
     <a href="ff?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">早送り</a>
     <a href="audio?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">音声切り替え</a>
     <a href="pause?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">一時停止</a>
     <a href="#confirm" data-rel="dialog">中止</a>
+<script>
+  var volFunc = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    $('#vol').text("音量は" + String(json.vol) + "dBです。");
+  }
+  $('#button-down').click(function(){
+    var xhr=new XMLHttpRequest();
+    xhr.addEventListener("load", volFunc);
+    xhr.open("GET","down");
+    xhr.send();
+  });
+  $('#button-up').click(function(){
+    var xhr=new XMLHttpRequest();
+    xhr.addEventListener("load", volFunc);
+    xhr.open("GET","up");
+    xhr.send();
+  });
+</script>
   </div>
 </div>
 

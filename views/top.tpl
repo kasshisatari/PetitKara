@@ -35,7 +35,7 @@ $.mobile.pushStateEnabled = false;
     <a href="#attention" data-role="button" data-rel="dialog">注意事項</a>
     <img src="../static/toppage.png">
     </div>
-    <div data-role="footer">Version 1.3.11</div>
+    <div data-role="footer">Version 1.3.12</div>
   </div>
 
   <div data-role="page" id="refresh">
