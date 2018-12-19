@@ -303,15 +303,8 @@ def down():
   vol = vol - volStep
   video.DownVolume()
 
-  # [[[ 2. Redirect Remote-Controller View ]]]
-  redirect( \
-    "/current?user=" + request.query.user + \
-    "&back=" + request.query.back + \
-    "&keyword=" + request.query.keyword + \
-    "&page=" + request.query.page + \
-    "&fileId=" + request.query.fileId + \
-    "&idx=" + request.query.idx + \
-    "&bookId=" + request.query.bookid)
+  # [[[ 2. Return JSON ]]]
+  return "{\"vol\":" + str(vol/100) + "}"
 
 # Volume Up
 @app.get("/up")
@@ -321,15 +314,8 @@ def up():
   vol = vol + volStep
   video.UpVolume()
 
-  # [[[ 2. Redirect Remote-Controller View ]]]
-  redirect( \
-    "/current?user=" + request.query.user + \
-    "&back=" + request.query.back + \
-    "&keyword=" + request.query.keyword + \
-    "&page=" + request.query.page + \
-    "&fileId=" + request.query.fileId + \
-    "&idx=" + request.query.idx + \
-    "&bookId=" + request.query.bookid)
+  # [[[ 2. Return JSON ]]]
+  return "{\"vol\":" + str(vol/100) + "}"
 
 @app.route('/static/:path#.+#', name='static')
 def static(path):
