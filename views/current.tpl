@@ -20,37 +20,114 @@ $.mobile.pushStateEnabled = false;
 <div data-role="page">
   <div data-role="header" data-add-back-btn="true">
     <a href="{{!back}}?user={{!name}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">戻る</a>
-    <h1>{{!user}}</h1>
+    <h1 id="text-user"></h1>
   </div>
   <div role="main" class="ui-content">
-{{!path}}<br>
-{{!duration}}<br>
-<p id="vol">音量は{{!vol}}dBです。</p>
+    <p id="path"></p>
+    <p id="duration"></p>
+    <p id="vol"></p>
   </div>
   <div data-role="footer">
     <a href="#" id="button-down">音量小</a>
     <a href="#" id="button-up">音量大</a>
-    <a href="rew?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">巻き戻し</a>
-    <a href="ff?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">早送り</a>
-    <a href="audio?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">音声切り替え</a>
-    <a href="pause?user={{!name}}&back={{!back}}&page={{!page}}&keyword={{!keyword}}&fileId{{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">一時停止</a>
-    <a href="#confirm" data-rel="dialog">中止</a>
+    <a href="#" id="button-rew">巻き戻し</a>
+    <a href="#" id="button-ff">早送り</a>
+    <a href="#" id="button-audio">音声切り替え</a>
+    <a href="#" id="button-pause"></a>
+    <a href="#confirm" id="button-stop" data-rel="dialog">中止</a>
 <script>
   var volFunc = function()
   {
     var json = $.parseJSON(this.responseText);
     $('#vol').text("音量は" + String(json.vol) + "dBです。");
   }
+  var infoFunc = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    if (true == json.play)
+    {
+      $('#path').text(json.path);
+      $('#duration').text(json.duration);
+      $('#text-user').text(json.user);
+      $('#button-rew').show();
+      $('#button-ff').show();
+      $('#button-audio').show();
+      $('#button-stop').show();
+    }
+    else
+    {
+      $('#path').text("再生中の動画はありません。");
+      $('#duration').text("");
+      $('#text-user').text("");
+      $('#button-rew').hide();
+      $('#button-ff').hide();
+      $('#button-audio').hide();
+      $('#button-stop').hide();
+    }
+    $('#vol').text("音量は" + String(json.vol) + "dBです。");
+    if (true == json.pause)
+    {
+      $('#button-pause').text("再開");
+    }
+    else
+    {
+      $('#button-pause').text("一時停止");
+    }
+  }
+  var statusFunc = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    if (true == json.playing)
+    {
+      $('#button-pause').text("再開");
+    }
+    else
+    {
+      $('#button-pause').text("一時停止");
+    }
+  }
+  var loadFunc = function()
+  {
+    var xhrVol = new XMLHttpRequest();
+    xhrVol.addEventListener("load", infoFunc);
+    xhrVol.open("GET", "current/json");
+    xhrVol.send();
+  }
+  $(function(){
+    loadFunc();
+    setInterval(loadFunc, 1000);
+  });
   $('#button-down').click(function(){
     var xhr=new XMLHttpRequest();
     xhr.addEventListener("load", volFunc);
-    xhr.open("GET","down");
+    xhr.open("GET","vol/json?step=-300");
     xhr.send();
   });
   $('#button-up').click(function(){
     var xhr=new XMLHttpRequest();
     xhr.addEventListener("load", volFunc);
-    xhr.open("GET","up");
+    xhr.open("GET","vol/json?step=300");
+    xhr.send();
+  });
+  $('#button-pause').click(function() {
+    var xhr=new XMLHttpRequest();
+    xhr.addEventListener("load", statusFunc);
+    xhr.open("GET", "pause/json");
+    xhr.send();
+  });
+  $('#button-rew').click(function() {
+    var xhr=new XMLHttpRequest();
+    xhr.open("GET", "pos?offset=-5000");
+    xhr.send();
+  });
+  $('#button-ff').click(function() {
+    var xhr=new XMLHttpRequest();
+    xhr.open("GET", "pos?offset=5000");
+    xhr.send();
+  });
+  $('#button-audio').click(function() {
+    var xhr=new XMLHttpRequest();
+    xhr.open("GET", "audio");
     xhr.send();
   });
 </script>
