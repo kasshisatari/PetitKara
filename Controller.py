@@ -49,7 +49,6 @@ comment = None   # playing file comment
 duration = None  # playing file duration
 audioNum = 0     # playing file audio stream
 vol = -4500      # current volume
-volStep = 300    # 0.3dB
 app = Bottle()   # bottle instance
 pause = False    # pause
 video = None     # video instance
@@ -162,40 +161,43 @@ def restart():
   os.system("sudo shutdown -r now")
 
 # Remote-Controller View
-@app.get("/current")
-def current():
+@app.get("/current/json")
+def currentinfo():
   # [[[ 1. Update View ]]]
+  pauseStr = "true"
+  if False is pause:
+    pauseStr = "false"
   if False is video.CheckPlaying():
     # < Not Playing >
     # [[ 1.1. Not Playing View ]]]
-    return template( \
-      'nothing', \
-      name = request.query.user, \
-      vol = vol/100, \
-      back = request.query.back, \
-      keyword = request.query.keyword, \
-      page = request.query.page, \
-      fileId = request.query.fileId, \
-      bookId = request.query.bookId, \
-      idx = request.query.idx, \
-      pause = u"再開" if pause is True else u"一時停止")
+    return "{" + \
+      "\"play\":false," + \
+      "\"vol\":" + str(vol/100) + "," + \
+      "\"pause\":" + pauseStr + "}"
   else:
     # < Playing >
     # [[ 1.2. Playing View ]]
-    return template( \
-      'current', \
-      name = request.query.user, \
-      user = user, \
-      path = path, \
-      comment = comment, \
-      duration = duration, \
-      back = request.query.back, \
-      keyword = request.query.keyword, \
-      page = request.query.page, \
-      fileId = request.query.fileId, \
-      bookId = request.query.bookId, \
-      idx = request.query.idx, \
-      vol = vol/100)
+    return "{" + \
+      "\"play\":true," + \
+      "\"path\":\"" + path + "\"," + \
+      "\"duration\":\"" + duration + "\"," + \
+      "\"user\":\"" + user + "\"," + \
+      "\"vol\":" + str(vol/100) + "," + \
+      "\"pause\":" + pauseStr + "}"
+
+# Remote-Controller View
+@app.get("/current")
+def current():
+  # [[[ 1. Update View ]]]
+  return template( \
+    'current', \
+    name = request.query.user, \
+    back = request.query.back, \
+    keyword = request.query.keyword, \
+    page = request.query.page, \
+    fileId = request.query.fileId, \
+    bookId = request.query.bookId, \
+    idx = request.query.idx)
 
 # Stop Video
 @app.get("/stop")
@@ -213,8 +215,16 @@ def stop():
     "&idx=" + request.query.idx + \
     "&bookId=" + request.query.bookId)
 
+# Playing Status
+@app.get("/playing/json")
+def playing():
+  if False is pause:
+    return "{\"playing\":false}"
+  else:
+    return "{\"playing\":true}"
+
 # Pause Video
-@app.get("/pause")
+@app.get("/pause/json")
 def suspend():
   global pause
   # [[[ 1. Switch HDMI Signal ]]]
@@ -237,15 +247,8 @@ def suspend():
     # [[ 3.2. Update Pause Status Pausing -> Not Pausing ]]
     pause = False
 
-  # [[[ 4. Redirect Remote-Controller View ]]]
-  redirect( \
-    "/current?user=" + request.query.user + \
-    "&back=" + request.query.back + \
-    "&keyword=" + request.query.keyword + \
-    "&page=" + request.query.page + \
-    "&fileId=" + request.query.fileId + \
-    "&idx=" + request.query.idx + \
-    "&bookId=" + request.query.bookid)
+  # [[[ 4. Return JSON ]]]
+  return playing()
 
 # Switch Audio of Video
 @app.get("/audio")
@@ -253,66 +256,29 @@ def audio():
   # [[[ 1. Switch Audio ]]]
   video.SwitchAudio()
 
-  # [[[ 2. Redirect Remote-Controller View ]]]
-  redirect( \
-    "/current?user=" + request.query.user + \
-    "&back=" + request.query.back + \
-    "&keyword=" + request.query.keyword + \
-    "&page=" + request.query.page + \
-    "&fileId=" + request.query.fileId + \
-    "&idx=" + request.query.idx + \
-    "&bookId=" + request.query.bookid)
+# Position Video
+@app.get("/pos")
+def posctrl():
+  # [[[ 1. Check Request ]]]
+  if "" != request.query.offset:
+    # < Change Position >
+    if int(request.query.offset) > 0:
+      video.FastForward()
+    else:
+      video.Rewind()
 
-# Rewind Video
-@app.get("/rew")
-def rew():
-  # [[[ 1. Rewind Video ]]]
-  video.Rewind()
-
-  # [[[ 2. Redirect Remote-Controller View ]]]
-  redirect( \
-    "/current?user=" + request.query.user + \
-    "&back=" + request.query.back + \
-    "&keyword=" + request.query.keyword + \
-    "&page=" + request.query.page + \
-    "&fileId=" + request.query.fileId + \
-    "&idx=" + request.query.idx + \
-    "&bookId=" + request.query.bookid)
-
-# Fast Forward Video
-@app.get("/ff")
-def ff():
-  # [[[ 1. Fast Forward Video ]]]
-  video.FastForward()
-
-  # [[[ 2. Redirect Remote-Controller View ]]]
-  redirect( \
-    "/current?user=" + request.query.user + \
-    "&back=" + request.query.back + \
-    "&keyword=" + request.query.keyword + \
-    "&page=" + request.query.page + \
-    "&fileId=" + request.query.fileId + \
-    "&idx=" + request.query.idx + \
-    "&bookId=" + request.query.bookid)
-
-# Volume Down
-@app.get("/down")
-def down():
+# Volume Control
+@app.get("/vol/json")
+def volctrl():
   global vol
-  # [[[ 1. Volume Down ]]]
-  vol = vol - volStep
-  video.DownVolume()
-
-  # [[[ 2. Return JSON ]]]
-  return "{\"vol\":" + str(vol/100) + "}"
-
-# Volume Up
-@app.get("/up")
-def up():
-  global vol
-  # [[[ 1. Volume Up ]]]
-  vol = vol + volStep
-  video.UpVolume()
+  # [[[ 1. Check Request ]]]
+  if "" != request.query.step:
+    # < Change Volume >
+    vol = vol + int(request.query.step)
+    if int(request.query.step) > 0:
+      video.UpVolume()
+    else:
+      video.DownVolume()
 
   # [[[ 2. Return JSON ]]]
   return "{\"vol\":" + str(vol/100) + "}"
