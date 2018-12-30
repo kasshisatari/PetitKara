@@ -70,7 +70,12 @@ sudo ed /boot/config.txt << EOF
 wq
 EOF
 
-sudo ed /home/pi/.config/pcmanfm/LXDE-pi/pcmanfm.conf << EOF
+sudo ed /etc/xdg/pcmanfm/default/pcmanfm.conf << EOF
+%s/autorun=1/autorun=0/
+wq
+EOF
+
+sudo ed /etc/xdg/pcmanfm/LXDE-pi/pcmanfm.conf << EOF
 %s/autorun=1/autorun=0/
 wq
 EOF
