@@ -67,7 +67,11 @@ sudo ed /boot/config.txt << EOF
 %s/#hdmi_force/hdmi_force/
 %s/#hdmi_group/hdmi_group/
 %s/#hdmi_mode=1/hdmi_mode=16/
-.
+wq
+EOF
+
+sudo ed /home/pi/.config/pcmanfm/LXDE-pi/pcmanfm.conf << EOF
+%s/autorun=1/autorun=0/
 wq
 EOF
 

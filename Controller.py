@@ -160,6 +160,18 @@ def restart():
   # [[[ 1. Restart ]]]
   os.system("sudo shutdown -r now")
 
+# Posotion
+@app.get("/pos/json")
+def posinfo():
+  # [[[ 1. Check Playing ]]]
+  if False is video.CheckPlaying():
+    # < Not Playing >
+    # [[ 1.1. Return JSON ]]]
+    return "{\"play\":false}"
+  # < Playing >
+  # [[[ 2. Return JSON ]]]
+  return "{\"play\":true,\"pos\":" + str(video.Position()) + "}"
+
 # Remote-Controller View
 @app.get("/current/json")
 def currentinfo():
@@ -177,9 +189,11 @@ def currentinfo():
   else:
     # < Playing >
     # [[ 1.2. Playing View ]]
+    pos = video.Position()
     return "{" + \
       "\"play\":true," + \
       "\"path\":\"" + path + "\"," + \
+      "\"pos\":" + str(video.Position()) + "," + \
       "\"duration\":\"" + duration + "\"," + \
       "\"user\":\"" + user + "\"," + \
       "\"vol\":" + str(vol/100) + "," + \
