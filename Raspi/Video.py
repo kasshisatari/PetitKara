@@ -30,6 +30,7 @@ import time
 import subprocess
 import os
 import threading
+import dbus
 
 class Video:
   def __init__(self):
@@ -73,6 +74,34 @@ class Video:
     # [[[ 3. Initialize Audio Stream Switching ]]]
     self.audioNum = audioNum
     self.audioStream = 0
+    self.vol = vol
+
+    # [[[ 4. D-Bus ]]]
+    flag = True
+    while True == flag:
+      try:
+        while False == os.path.exists("/tmp/omxplayerdbus.pi"):
+          time.sleep(0.05)
+        time.sleep(0.05)
+        dbusAddress = open("/tmp/omxplayerdbus.pi", "r")
+        self.bus = dbus.bus.BusConnection(dbusAddress.readline()[0:-1])
+        dbusAddress.close()
+        self.proxy = self.bus.get_object(
+          'org.mpris.MediaPlayer2.omxplayer',
+          '/org/mpris/MediaPlayer2',
+          introspect=False)
+        self.root_interface = dbus.Interface(
+          self.proxy,
+          'org.mpris.MediaPlayer2')
+        self.player_interface = dbus.Interface(
+          self.proxy,
+          'org.mpris.MediaPlayer2.Player')
+        self.properties_interface = dbus.Interface(
+          self.proxy,
+          'org.freedesktop.DBus.Properties')
+        flag = False
+      except:
+        pass
 
   # Check playing is done
   def CheckPlaying(self) : # Bool True(Playing) / False(Stop)
@@ -89,29 +118,17 @@ class Video:
       # < omxplayer is not running >
       return False
 
-  # Set D-Bus Address to Environment Variable
-  def SetDBusEnvironment(self) : # None
-    # [[[ 1. Open Process Information ]]]
-    dbusAddress = open("/tmp/omxplayerdbus.pi","r")
-    # [[[ 2. Set Environment Variable ]]]
-    os.environ["DBUS_SESSION_BUS_ADDRESS"] = \
-      dbusAddress.readline()[0:-1]
-    dbusAddress.close()
-
   # Fade Stop Playing Video
   def FadeStopThread(self) : # None
     try:
       # < omxplayer is running >
       # [[[ 1. volume down ]]]
       for i in range(15):
-        self.proc.stdin.write(b"-")
-        self.proc.stdin.flush()
+        self.DownVolume()
         time.sleep(0.2)
       # [[[ 2. exit omxplayer ]]]
-      self.proc.stdin.write(b"q")
-      # [[[ 3. Flush stdin ]]]
-      self.proc.stdin.flush()
-      # [[[ 4. Terminate omxplayer ]]]
+      self.root_interface.Quit()
+      # [[[ 3. Terminate omxplayer ]]]
       self.proc = None
     except:
       pass
@@ -125,71 +142,70 @@ class Video:
   # Pause Video
   def Pause(self) : # None
     try:
-      # < omxplayer is running >
-      # [[[ 1. pause / resume ]]]
-      self.proc.stdin.write(b"p")
-      # [[[ 2. Flush stdin ]]]
-      self.proc.stdin.flush()
+      self.player_interface.PlayPause()
     except:
       pass
 
   # Switch Audio
   def SwitchAudio(self) : # None
+    # [[[ 1. Check audio number ]]]
     if 1 == self.audioNum:
       return
+
+    # [[[ 2. Change audio stream ]]]
     self.audioStream = self.audioStream + 1
+    if self.audioNum == self.audioStream:
+      # [[ 2.1. back audio stream ]]
+      self.audioStream = 0
     try:
-      # < omxplayer is running >
-      # [[[ 1. change audio stream ]]]
-      if self.audioNum == self.audioStream:
-        # [[ 1.1. back audio stream ]]
-        self.audioStream = 0
-        for num in range(self.audioNum - 1):
-          self.proc.stdin.write(b"j")
-      else:
-        # [[ 1.2. next audio stream ]]
-        self.proc.stdin.write(b"k")
-      # [[[ 2. Flush stdin ]]]
-      self.proc.stdin.flush()
+      self.player_interface.SelectAudio(self.audioStream)
+
+      # [[[ 3. Seek for change audio immediately ]]]
+      self.player_interface.Seek(dbus.types.Int64(1))
     except:
       pass
-    # [[[ 3. Set D-Bus Address to Environment Variable ]]]
-    self.SetDBusEnvironment()
-    # [[[ 4. Call for Seek ]]]
-    subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:1'.split())
+
+  # Position
+  def Position(self) : # [sec]
+    return self.properties_interface.Get(
+      self.player_interface.dbus_interface,
+      "Position"
+    ) / 1000000
 
   # Rewind
   def Rewind(self) : # None
-    # [[[ 1. Set D-Bus Address to Environment Variable ]]]
-    self.SetDBusEnvironment()
-    # [[[ 2. Call for Seek ]]]
-    subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:-5000000'.split())
+    try:
+      self.player_interface.Seek(dbus.types.Int64(1000*1000*(-5)))
+    except:
+      pass
 
   # Fast Forward
   def FastForward(self) : # None
-    # [[[ 1. Set D-Bus Address to Environment Variable ]]]
-    self.SetDBusEnvironment()
-    # [[[ 2. Call for Seek ]]]
-    subprocess.call(b'dbus-send --print-reply=literal --session --dest=org.mpris.MediaPlayer2.omxplayer /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Seek int64:5000000'.split())
+    try:
+      self.player_interface.Seek(dbus.types.Int64(1000*1000*(5)))
+    except:
+      pass
 
   # Down Volume
   def DownVolume(self) : # None
+    self.vol = self.vol - 300
     try:
-      # < omxplayer is running >
-      # [[[ 1. next audio stream ]]]
-      self.proc.stdin.write(b"-")
-      # [[[ 2. Flush stdin ]]]
-      self.proc.stdin.flush()
+      self.properties_interface.Set(
+        self.player_interface.dbus_interface,
+        "Volume",
+        pow(10,self.vol/2000.0)
+      )
     except:
       pass
 
   # Up Volume
   def UpVolume(self) : # None
+    self.vol = self.vol + 300
     try:
-      # < omxplayer is running >
-      # [[[ 1. next audio stream ]]]
-      self.proc.stdin.write(b"+")
-      # [[[ 2. Flush stdin ]]]
-      self.proc.stdin.flush()
+      self.properties_interface.Set(
+        self.player_interface.dbus_interface,
+        "Volume",
+        pow(10,self.vol/2000.0)
+      )
     except:
       pass
