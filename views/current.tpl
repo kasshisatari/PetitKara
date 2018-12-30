@@ -41,18 +41,45 @@ $.mobile.pushStateEnabled = false;
     var json = $.parseJSON(this.responseText);
     $('#vol').text("音量は" + String(json.vol) + "dBです。");
   }
+  var duration = "";
+  var loadFlag = false;
+  var playFlag = false;
+  var posFunc = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    if (true == json.play)
+    {
+      hour = ('00' + String(Math.floor(json.pos / 3600))).slice(-2);
+      min = ('00' + String(Math.floor((json.pos % 3600) / 60))).slice(-2);
+      sec = ('00' + String(json.pos % 60)).slice(-2);
+      $('#duration').text(hour + ":" + min + ":" + sec + "/" + duration);
+      loadFlag = false;
+      playFlag = true;
+    }
+    else
+    {
+      loadFlag = false;
+      playFlag = false;
+    }
+  }
   var infoFunc = function()
   {
     var json = $.parseJSON(this.responseText);
     if (true == json.play)
     {
+      hour = ('00' + String(Math.floor(json.pos / 3600))).slice(-2);
+      min = ('00' + String(Math.floor((json.pos % 3600) / 60))).slice(-2);
+      sec = ('00' + String(json.pos % 60)).slice(-2);
+      duration = json.duration;
       $('#path').text(json.path);
-      $('#duration').text(json.duration);
+      $('#duration').text(hour + ":" + min + ":" + sec + "/" + duration);
       $('#text-user').text(json.user);
       $('#button-rew').show();
       $('#button-ff').show();
       $('#button-audio').show();
       $('#button-stop').show();
+      loadFlag = true;
+      playFlag = true;
     }
     else
     {
@@ -63,6 +90,8 @@ $.mobile.pushStateEnabled = false;
       $('#button-ff').hide();
       $('#button-audio').hide();
       $('#button-stop').hide();
+      playFlag = false;
+      loadFlag = true;
     }
     $('#vol').text("音量は" + String(json.vol) + "dBです。");
     if (true == json.pause)
@@ -88,14 +117,28 @@ $.mobile.pushStateEnabled = false;
   }
   var loadFunc = function()
   {
-    var xhrVol = new XMLHttpRequest();
-    xhrVol.addEventListener("load", infoFunc);
-    xhrVol.open("GET", "current/json");
-    xhrVol.send();
+    if (false == loadFlag)
+    {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("load", infoFunc);
+      xhr.open("GET", "current/json");
+      xhr.send();
+    }
+    else if (true == playFlag)
+    {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("load", posFunc);
+      xhr.open("GET", "pos/json");
+      xhr.send();
+    }
+    else
+    {
+      loadFlag = false;
+    }
   }
   $(function(){
     loadFunc();
-    setInterval(loadFunc, 1000);
+    setInterval(loadFunc, 500);
   });
   $('#button-down').click(function(){
     var xhr=new XMLHttpRequest();
