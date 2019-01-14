@@ -35,7 +35,7 @@ $.mobile.pushStateEnabled = false;
     <a href="#attention" data-role="button" data-rel="dialog">注意事項</a>
     <img src="../static/toppage.png">
     </div>
-    <div data-role="footer">Version 1.3.14</div>
+    <div data-role="footer">Version 1.3.15</div>
   </div>
 
   <div data-role="page" id="refresh">
@@ -129,6 +129,19 @@ $.mobile.pushStateEnabled = false;
     </div>
     <div data-role="footer"></div>
   </div>
+
+<script>
+var xhr = new XMLHttpRequest();
+var day = new Date();
+xhr.open("GET", "sync?time=" + 
+  day.getFullYear() + "/" + 
+  day.getMonth()+1 + "/" + 
+  day.getDate() + " " + 
+  day.getHours() + ":" + 
+  day.getMinutes() + ":" + 
+  day.getSeconds());
+xhr.send();
+</script>
 
 </body>
 </html>

@@ -19,7 +19,7 @@ $.mobile.pushStateEnabled = false;
 
 <div data-role="page">
   <div data-role="header" data-add-back-btn="true">
-    <a href="{{!back}}?user={{!name}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">戻る</a>
+    <a href="{{!back}}?user={{!name}}&keyword={{!keyword}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}&time={{!time}}" rel="external">戻る</a>
     <h1 id="text-user"></h1>
   </div>
   <div role="main" class="ui-content">
@@ -182,7 +182,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="content">
 動画再生を終了しますか。
   <form>
-  <a data-role="button" href="stop?user={{!name}}&keyword={{!keyword}}&back={{!back}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}" rel="external">はい</a>
+  <a data-role="button" href="stop?user={{!name}}&keyword={{!keyword}}&back={{!back}}&page={{!page}}&fileId={{!fileId}}&bookId={{!bookId}}&idx={{!idx}}&time={{!time}}" rel="external">はい</a>
   <a data-role="button" href="/" data-rel="back">いいえ</a>
   </form>
   </div>
