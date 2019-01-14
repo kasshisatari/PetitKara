@@ -32,8 +32,6 @@ fileName = "hisotry.db" # DB File Name
 conn = None             # SQLite Connection
 c = None                # SQLite Cursor
 lock = threading.Lock() # Lock Object
-count = 1               # count for historyFile
-historyFile = "history.txt"
 
 # Initialize DB
 def init(): # None
@@ -74,9 +72,73 @@ def Count(
   count = c.fetchone()[0]
 
   # [[[ 3. Unlock ]]]
+  conn.rollback()
   lock.release()
 
   return count
+
+# Modify
+def Modify(
+      time,    # String(In): Time
+      comment, # String(In): Comment
+    ): # None
+  global conn
+  global c
+  global lock
+
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Update Comment ]]]
+  c.execute( \
+    "UPDATE History SET Comment = ? WHERE Time = ?", [comment, time])
+
+  # [[[ 3. Unlock ]]]
+  conn.commit()
+  lock.release()
+
+  return
+
+# Delete
+def Delete(
+      time # String(In): Time
+    ): # None
+  global conn
+  global c
+  global lock
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+  c.execute("begin")
+
+  # [[[ 2. Delete Record ]]]
+  c.execute("delete from History where TIME = ?", [time])
+
+  # [[[ 3. Unlock ]]]
+  conn.commit()
+  lock.release()
+
+  return
+
+# Get
+def Get(
+      time # String(In): Time
+    ): # list(path,user,comment,time)
+  global conn
+  global c
+  global lock
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+  c.execute("begin")
+
+  # [[[ 2. Get Record ]]]
+  c.execute("select * from History where TIME = ?", [time])
+  row = c.fetchone()
+
+  # [[[ 3. Unlock ]]]
+  conn.rollback()
+  lock.release()
+
+  return row
 
 # Add
 def Add(
@@ -87,7 +149,6 @@ def Add(
   global conn
   global c
   global lock
-  global count
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
@@ -102,16 +163,6 @@ def Add(
   # [[[ 3. UnLock ]]]
   conn.commit()
   lock.release()
-
-  # [[[ 4. Add History File ]]]
-  log = open(historyFile, "a")
-  name, ext = os.path.splitext(os.path.basename(path))
-  log.write( \
-    str(count) + "." + \
-    name.encode('utf-8') + " - " + \
-    user.encode('utf-8') + "\n\n")
-  count = count + 1
-  log.close()
 
   return True
 
@@ -136,24 +187,32 @@ def List(): # list(tuple(Path,User,Comment,Time))
   lock.release()
   return list
 
-# Get Historylist Tags
-def Historylist():
-  list = ''
-  for row in List():
-    list = list + \
-      "<li style=\"white-space:pre-line;\">" + \
-      row[1] + "<br>" + \
-      os.path.basename(row[0]) + "<br>" + \
-      row[2] + \
-      "</li>"
-  return list
-
-# Delete History
-def Delete():
+# List Records for CSV
+def Extract(): # list(tuple(Name,Path,User,Comment,Time))
   global conn
   global c
   global lock
-  global count
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+  c.execute("begin")
+
+  # [[[ 2. Initialize List ]]]
+  list = []
+
+  # [[[ 3. Make List ]]]
+  for row in c.execute("select * from History order by Time asc"):
+    list.append((os.path.basename(row[0]),row[0],row[1],row[2],row[3]))
+
+  # [[[ 4. UnLock ]]]
+  conn.rollback()
+  lock.release()
+  return list
+
+# Reset History
+def Reset():
+  global conn
+  global c
+  global lock
   # [[[ 1. Lock ]]]
   lock.acquire()
 
@@ -170,13 +229,6 @@ def Delete():
 
   # [[[ 5. Unlock ]]]
   lock.release()
-
-  # [[[ 6. Reset count ]]]
-  count = 1
-
-  # [[[ 7. Delete File ]]]
-  if os.path.exists(historyFile):
-    os.remove(historyFile)
 
   return
 

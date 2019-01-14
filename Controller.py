@@ -28,7 +28,8 @@
 
 from bottle import \
   Bottle, run, get, template, \
-  request, route, static_file, redirect
+  request, route, static_file, redirect, \
+  response
 from paste import httpserver as web
 import sqlite3
 import os
@@ -42,6 +43,7 @@ from Raspi import VideoInfo
 import HDMI
 from Raspi import Video
 import Favorite
+import datetime
 
 path = None      # playing file path
 user = None      # playing file user
@@ -211,6 +213,7 @@ def current():
     page = request.query.page, \
     fileId = request.query.fileId, \
     bookId = request.query.bookId, \
+    time = request.query.time, \
     idx = request.query.idx)
 
 # Stop Video
@@ -227,6 +230,7 @@ def stop():
     "&page=" + request.query.page + \
     "&fileId=" + request.query.fileId + \
     "&idx=" + request.query.idx + \
+    "&time=" + request.query.time + \
     "&bookId=" + request.query.bookId)
 
 # Playing Status
@@ -320,11 +324,80 @@ def listpage():
     keyword = request.query.keyword, \
     page=request.query.page)
 
+@app.get("/sync")
+def sync():
+  now = datetime.datetime.now()
+  recv = datetime.datetime.strptime(request.query.time, "%Y/%m/%d %H:%M:%S")
+  diff = abs((recv - now).total_seconds())
+  if (diff > 10):
+    subprocess.call(['sudo', 'date', '--set=' + request.query.time ])
+
 @app.get("/history")
 def history():
   return template( \
     'history', \
     name = request.query.user)
+
+@app.get("/history/csv")
+def historyCsv():
+  recv = datetime.datetime.strptime(request.query.time, "%Y/%m/%d %H:%M:%S")
+  response.content_type = 'application/octet-stream'
+  response.headers['Content-Disposition'] = \
+    "attachment; filename=" + \
+    recv.strftime('%Y-%m-%d_%H-%M-%S') + ".csv"
+  csv = ''
+  extractFlag = False
+  for row in History.Extract():
+    if row[4] == request.query.time:
+      extractFlag = True
+    if True == extractFlag:
+      csv = csv + \
+        row[4] + "," + row[0] + "," + \
+        row[2] + "," + row[3] + "," + row[1] + "\r\n"
+  return csv
+
+@app.get("/deletehistory")
+def deleteHistory():
+  History.Delete(request.query.time)
+  redirect('/history?user=' + request.query.user)
+
+@app.get("/changehistory")
+def changeHistory():
+  History.Modify(request.query.time, request.query.comment)
+  redirect('/history?user=' + request.query.user)
+
+@app.get("/historydetail")
+def historyDetail():
+  return template( \
+    'historydetail', \
+    name = request.query.user, \
+    time = request.query.time)
+
+@app.get("/historydetail/json")
+def historyDetailJson():
+  row = History.Get(request.query.time)
+  return "{" + \
+    "\"path\":\"" + row[0] + "\"," + \
+    "\"user\":\"" + row[1] + "\"," + \
+    "\"comment\":\"" + row[2] + "\"," + \
+    "\"time\":\"" + row[3] + "\"" + \
+    "}"
+
+@app.get("/history/json")
+def historyJson():
+  list = '['
+  firstLine = True
+  for row in History.List():
+    if True == firstLine:
+      firstLine = False
+    else:
+      list = list + ","
+    list = list + \
+      "{\"file\":\"" + os.path.basename(row[0]) + "\"," + \
+      "\"user\":\"" + row[1] + "\"," + \
+      "\"comment\":\"" + row[2] + "\"," + \
+      "\"time\":\"" + row[3] + "\"}"
+  return list + "]"
 
 @app.get("/insert")
 def insert():
@@ -470,17 +543,36 @@ def refresh():
   File.init()
   redirect("/")
 
+@app.get("/drives/json")
+def drives():
+  # [[[ 1. Drive Number ]]]
+  mount = subprocess.Popen(
+    "ls /media/pi/ | wc -l",
+    stdout = subprocess.PIPE,
+    stderr = subprocess.PIPE,
+    env = {'LANG': 'C'},
+    shell = True
+  )
+  out, err = mount.communicate()
+  outLines = out.decode("ascii", "ignore").splitlines()
+  driveNum = 0
+  for line in outLines:
+    driveNum = line
+
+  # [[[ 2. Return JSON ]]]
+  return "{\"drives\":" + driveNum + "}"
+
 @app.get("/reset")
 def reset():
   Book.Reset()
   File.Delete()
-  History.Delete()
+  History.Reset()
   Favorite.Reset()
   redirect("/")
 
 @app.get("/initHistory")
 def refresh():
-  History.Delete()
+  History.Reset()
   redirect("/")
 
 # [[[ 1. Initialize HDMI Signal Switcher ]]]
