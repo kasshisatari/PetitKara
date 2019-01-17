@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2018 oscillo
+# Copyright 2018-2019 oscillo
 # 
 # Permission is hereby granted, free of charge,
 # to any person obtaining a copy of this software 
