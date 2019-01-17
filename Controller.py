@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2018 oscillo
+# Copyright 2018-2019 oscillo
 # 
 # Permission is hereby granted, free of charge,
 # to any person obtaining a copy of this software 
@@ -408,6 +408,14 @@ def insert():
   else:
     visible = True
   dirName, fileName = File.Get(fileId)
+  if ("on" == request.query.get('pause')):
+    Book.AddTop( \
+      u"空予約", \
+      request.query.user, \
+      "", \
+      True, \
+      "00:00:00.00", \
+      True)
   Book.AddTop( \
     os.path.join(dirName,fileName), \
     request.query.user, \
@@ -497,6 +505,14 @@ def add():
     visible, \
     videoInfo.GetDuration(os.path.join(dirName,fileName)), \
     False)
+  if ("on" == request.query.get('pause')):
+    Book.AddLast( \
+      u"空予約", \
+      request.query.user, \
+      "", \
+      True, \
+      "00:00:00.00", \
+      True)
   redirect( \
     "/" + request.query.back + \
     "?user=" + request.query.user + \
