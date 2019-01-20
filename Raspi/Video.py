@@ -55,7 +55,7 @@ class Video:
     if False == alsa:
       self.start = "omxplayer --no-osd -b -o hdmi --vol "
     else:
-      self.start = "omxplayer --hw --no-osd -b -o alsa:plughw:1,0 --vol "
+      self.start = "omxplayer --no-osd -b -o alsa:plughw:1,0 --vol "
     self.proc = None       # omxplayer process
     self.stopThread = None # stop thread
 
