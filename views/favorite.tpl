@@ -69,6 +69,9 @@ $.mobile.pushStateEnabled = false;
       <label>
         <input id="secret" name="secret" type="checkbox" />非公開
       </label>
+      <label>
+        <input id="pause" name="pause" type="checkbox" />演奏後に一時停止
+      </label>
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>
@@ -87,6 +90,9 @@ $.mobile.pushStateEnabled = false;
       <input id="back" name="back" type="hidden" value="favorites" />
       <label>
         <input id="secret" name="secret" type="checkbox" />非公開
+      </label>
+      <label>
+        <input id="pause" name="pause" type="checkbox" />演奏後に一時停止
       </label>
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
