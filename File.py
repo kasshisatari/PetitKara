@@ -257,16 +257,16 @@ def Search(keywords,user,page): # string with <li></li> elements
         "<li><a class=\"ui-btn ui-icon-check ui-btn-icon-left\" " + \
         "href=\"detail?fileId=" + str(row[0]) + \
         "&user=" + user + "&keyword=" + keywords + \
-        "&page=" + page + "\" rel=\"external\">" + \
-        row[1] + "</a></li>"
+        "&page=" + page + "\" rel=\"external\"><font style=\"white-space:normal;\">" + \
+        row[1] + "</font></a></li>"
     else:
       # < Not Play >
       list = list + \
         "<li><a " + \
         "href=\"detail?fileId=" + str(row[0]) + \
         "&user=" + user + "&keyword=" + keywords + \
-        "&page=" + page + "\" rel=\"external\">" + \
-        row[1] + "</a></li>"
+        "&page=" + page + "\" rel=\"external\"><font style=\"white-space:normal;\">" + \
+        row[1] + "</font></a></li>"
 
   # [[[ 5. Unlock ]]]
   lock.release()
