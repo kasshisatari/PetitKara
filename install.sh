@@ -25,8 +25,9 @@ EOF
 cd /etc/hostapd/
 sudo cp /usr/share/doc/hostapd/examples/hostapd.conf.gz .
 sudo gzip -d -f hostapd.conf.gz
+cpuinfo=$(sum /proc/cpuinfo | cut -d ' ' -f1)
 sudo ed /etc/hostapd/hostapd.conf << EOF
-%s/ssid=test/ssid=PetitKara/
+%s/ssid=test/ssid=PetitKara$cpuinfo/
 wq
 EOF
 

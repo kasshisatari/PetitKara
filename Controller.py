@@ -59,7 +59,14 @@ videoInfo = None # videoInfo instance
 # Monitor View
 @app.get("/console")
 def console():
-  return template('console')
+  hostapd = open("/etc/hostapd/hostapd.conf")
+  for line in hostapd:
+    if 0 == line.find("ssid="):
+      ssid = line[5:]
+  hostapd.close()
+  return template( \
+    'console', \
+    ssid=ssid)
 
 # Play Video
 @app.get("/play")
