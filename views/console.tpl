@@ -42,5 +42,7 @@ setInterval(playVideo, 5000);
 </script>
 <br>
 <img src="static/toppage.png">
+<br>
+{{!ssid}}
 </body>
 </html>
