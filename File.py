@@ -28,6 +28,7 @@
 import threading
 import sqlite3
 import os
+from datetime import datetime
 from Raspi import VideoInfo
 import History
 fileName = "file.db"    # DB File Name  
@@ -294,12 +295,14 @@ def Detail(
   # [[[ 3. Make <li></li> List ]]]
   list = '' # return html string
   # [[ 3.1. Prepare SQL statement ]]
-  sql = 'SELECT FileID, DirName, FileName, Size FROM File WHERE FileID = ?'
+  sql = 'SELECT FileID, DirName, FileName, Size, Time FROM File WHERE FileID = ?'
   # [[ 3.2. Query ]]
   size = 0
+  time = ''
   filePath = ''
   for row in c.execute(sql, [no]):
     size = row[3]
+    time = row[4]
     filePath = os.path.join(row[1],row[2])
 
   # [[[ 4. Unlock ]]]
@@ -307,6 +310,7 @@ def Detail(
 
   # [[[ 5. Make Tag ]]]
   list = filePath + "<br>" + "{:,}".format(size) + "[Byte]<br>"
+  list = list + time + "<br>"
   if None is videoInfo:
     videoInfo = VideoInfo.VideoInfo()
   if (None is videoInfo.GetDuration(filePath)):
@@ -374,6 +378,7 @@ def init(): # None
     "[DirName] TEXT NOT NULL," +
     "[FileName] TEXT NOT NULL," +
     "[Size] INTEGER," +
+    "[Time] TEXT NOT NULL," +
     "PRIMARY KEY(FileID)" +
     ");")
   # [[[ 5. Insert File Information ]]]
@@ -383,7 +388,8 @@ def init(): # None
       str(fileId) + "," +
       "\"" + row[1] + "\"" + "," +
       "\"" + row[0] + "\"" + "," +
-      str(os.path.getsize(os.path.join(row[1],row[0]))) + ")")
+      str(os.path.getsize(os.path.join(row[1],row[0]))) + "," +
+      "\"" + datetime.fromtimestamp(os.stat(os.path.join(row[1],row[0])).st_mtime).strftime("%Y/%m/%d %H:%M:%S") + "\")")
     fileId = fileId + 1
   conn.commit()
   # [[[ 6. Unlock ]]]
