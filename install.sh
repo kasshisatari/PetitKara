@@ -1,6 +1,6 @@
 sudo apt-get update
 sudo apt-get install -y hostapd dnsmasq unclutter
-sudo aptitude install ntfs-3g
+sudo aptitude install -y ntfs-3g
 sudo ed /etc/network/interfaces.d/wlan0 << EOF
 a
 iface lo inet loopback
