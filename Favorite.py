@@ -195,17 +195,22 @@ def Delete(
 # Reset Favorite
 def Reset(): # None
   global lock
+  global conn
   # [[[ 1. Lock ]]]
   lock.acquire()
 
-  # [[[ 2. Delete Favorite File ]]]
+  # [[[ 2. Close ]]]
+  if conn is not None:
+    conn.close()
+
+  # [[[ 3. Delete Favorite File ]]]
   if os.path.exists("./" + fileName):
     os.remove(fileName)
 
-  # [[[ 3. Initialize Favorite File ]]]
+  # [[[ 4. Initialize Favorite File ]]]
   init()
 
-  # [[[ 4. Unlock ]]]
+  # [[[ 5. Unlock ]]]
   lock.release()
 
 init()
