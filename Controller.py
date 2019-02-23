@@ -586,7 +586,7 @@ def drives():
   return "{\"drives\":" + driveNum + "}"
 
 @app.get("/reset")
-def reset():
+def resetAll():
   Book.Reset()
   File.Delete()
   History.Reset()
@@ -594,7 +594,7 @@ def reset():
   redirect("/")
 
 @app.get("/initHistory")
-def refresh():
+def resetHistory():
   History.Reset()
   redirect("/")
 
@@ -607,5 +607,12 @@ videoInfo = VideoInfo.VideoInfo()
 img = qrcode.make("http://"+Address.Getwlan0()+":8080/")
 img.save("static/toppage.png")
 
-# [[[ 3. Start Web Server ]]]
+# [[[ 3. Refresh File List ]]]
+File.init()
+
+# [[[ 4. Start Browser ]]]
+os.system("chromium-browser --noerrdialogs --kiosk --incognito --no-default-browser-check http://localhost:8080/console &")
+
+# [[[ 5. Start Web Server ]]]
 web.serve(app,host="0.0.0.0",port=8080)
+
