@@ -46,6 +46,8 @@ class VideoInfo:
     # [[[ 2. Parse omxplayer -i output ]]]
     self.duration = ""
     self.audioNum = 0
+    self.audioName = []
+    audioIndex = 1
     for line in ifconfigLines:
       # [[ 2.1. Get Duration: ]]
       if "Duration:" in line:
@@ -53,6 +55,12 @@ class VideoInfo:
         self.duration = blocks[1][0:-1]
       if "Stream" in line and "Audio:" in line:
         self.audioNum = self.audioNum + 1
+      if "handler_name" in line and self.audioNum > 0:
+        self.audioName.append(str(audioIndex) + ":" + line[line.index(" : ") + 3:])
+        audioIndex = audioIndex + 1
+    if [] == self.audioName:
+      for audioIndex in range(self.audioNum):
+        self.audioName.append(str(audioIndex) + ":" )
 
   # Get Duration
   def GetDuration(self, file):
@@ -75,3 +83,36 @@ class VideoInfo:
     self.file = file
     self.UpdateInfo()
     return self.audioNum
+
+  # Get Name of Audio Stream
+  def GetAudioName(self, file):
+    # [[[ 1. Check Filename ]]]
+    if file == self.file:
+      return self.audioName
+
+    # [[[ 2. Update Information ]]]
+    self.file = file
+    self.UpdateInfo()
+    return self.audioName
+
+  # Get Tag of Audio Stream
+  def GetAudioTag(self, file):
+    # [[[ 1. Check Filename ]]]
+    audioName = []
+    if file == self.file:
+      for audioIndex in range(1, self.audioNum + 1):
+        audioName.append(\
+          "<option value=\"" + str(audioIndex) + "\">" +  \
+          self.audioName[audioIndex - 1] + \
+          "</option>")
+      return audioName
+
+    # [[[ 2. Update Information ]]]
+    self.file = file
+    self.UpdateInfo()
+    for audioIndex in range(1, self.audioNum + 1):
+      audioName.append(\
+        "<option value=\"" + str(audioIndex) + "\">" +  \
+        self.audioName[audioIndex - 1] + \
+        "</option>")
+    return audioName

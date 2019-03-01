@@ -60,11 +60,12 @@ class Video:
     self.stopThread = None # stop thread
 
   # Open and Playing Video
-  def Open(self,path,vol,audioNum) : # None
+  def Open(self,path,vol,audioNum, audioIndex) : # None
     # [[[ 1. Make playing command ]]]
     command = \
       self.start \
-      + str(vol) + " \"" \
+      + str(vol) \
+      + " -n " + str(audioIndex) + " \"" \
       + path + "\""
     # [[[ 2. Execute for playing ]]]
     self.proc = subprocess.Popen( \
