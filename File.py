@@ -394,3 +394,41 @@ def init(): # None
   conn.commit()
   # [[[ 6. Unlock ]]]
   lock.release()
+
+
+# GetAudioTag
+def GetAudioTag(
+      no  # String(In): FileID
+    ): # String(html)
+  global lock
+  global conn
+  global c
+  global videoInfo
+
+   # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Prepare SQLite ]]]
+  if conn is None:
+    conn = sqlite3.connect(fileName, check_same_thread=False)
+    c = conn.cursor()
+
+  # [[[ 3. Make <li></li> List ]]]
+  list = '' # return html string
+  # [[ 3.1. Prepare SQL statement ]]
+  sql = 'SELECT FileID, DirName, FileName, Size, Time FROM File WHERE FileID = ?'
+  # [[ 3.2. Query ]]
+  size = 0
+  time = ''
+  filePath = ''
+  for row in c.execute(sql, [no]):
+    size = row[3]
+    time = row[4]
+    filePath = os.path.join(row[1],row[2])
+
+  # [[[ 4. Unlock ]]]
+  lock.release()
+
+  # [[[ 5. Make Tag ]]]
+  return videoInfo.GetAudioTag(filePath)
+

@@ -59,17 +59,19 @@ def init(): # None
       "[Comment] TEXT, " +
       "[Visible] BOOLEAN DEFAULT '1', " +
       "[Duration] TEXT, " +
+      "[Audio] INTEGER NOT NULL, " +
       "[Dummy] BOOLEAN DEFAULT '0', " +
       "PRIMARY KEY(BookId));")
 
 # Add Top Record
 def AddTop(
-      path,    # String(In): File Full Path
-      user,    # String(In): User Name 
-      comment, # String(In): Comment
-      visible, # Bool  (In): True(Visible) / False(UnVisible)
-      duration,# String(In): Duration
-      dummy    # Bool  (In): Dummy
+      path,    # String (In): File Full Path
+      user,    # String (In): User Name 
+      comment, # String (In): Comment
+      visible, # Bool   (In): True(Visible) / False(UnVisible)
+      duration,# String (In): Duration
+      audio,   # Integer(In): Audio Stream Index(Begin 1)
+      dummy    # Bool   (In): Dummy
     ): # Bool True(Success) / False(Failure)
   global conn
   global c
@@ -121,6 +123,7 @@ def AddTop(
     "\"" + comment + "\"," +
     str(int(visible)) + "," +
     "\"" + duration + "\"," +
+    str(audio) + "," +
     str(int(dummy)) + ")")
 
   # [[[ 6. UnLock ]]]
@@ -133,12 +136,13 @@ def AddTop(
 
 # Add Last Record
 def AddLast(
-      path,    # String(In): File Full Path
-      user,    # String(In): User Name 
-      comment, # String(In): Comment
-      visible, # Bool  (In): True(Visible) / False(UnVisible)
-      duration,# String(In): Duration
-      dummy    # Bool  (In): Dummy
+      path,    # String (In): File Full Path
+      user,    # String (In): User Name 
+      comment, # String (In): Comment
+      visible, # Bool   (In): True(Visible) / False(UnVisible)
+      duration,# String (In): Duration
+      audio,   # Integer(In): Audio Stream Index(Begin 1)
+      dummy    # Bool   (In): Dummy
     ): # Bool True(Success) / False(Failure)
   global conn
   global c
@@ -187,6 +191,7 @@ def AddLast(
     "\"" + comment + "\"," +
     str(int(visible)) + "," +
     "\"" + duration + "\"," +
+    str(audio) + ", " +
     str(int(dummy)) + ")")
 
   # [[[ 5. UnLock ]]]
@@ -246,7 +251,7 @@ def Delete(
   return True
 
 # List Records
-def List(): # list(tuple(BookId,Idx,Path,User,Comment,Visible))
+def List(): # list(tuple(BookId,Idx,Path,User,Comment,Visible,Duration,Audio,Dummy))
   global conn
   global c
   global lock
@@ -259,7 +264,7 @@ def List(): # list(tuple(BookId,Idx,Path,User,Comment,Visible))
 
   # [[[ 3. Make List ]]]
   for row in c.execute("select * from Book order by Idx asc"):
-    list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7]))
+    list.append((row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
 
   # [[[ 4. UnLock ]]]
   conn.rollback()

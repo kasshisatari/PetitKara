@@ -88,14 +88,15 @@ def console():
       path = bookList[2]
       user = bookList[3]
       comment = bookList[4]
-      dummy = bookList[7]
+      dummy = bookList[8]
+      audioIndex = int(bookList[7])
       duration = videoInfo.GetDuration(path)
       audioNum = videoInfo.GetAudioNum(path)
       # [[ 1.2. Check Dummy ]]
       if 0 == dummy:
         # < Not Dummy >
         # [ 1.2.1. Play Video ]
-        video.Open(path, vol, audioNum)
+        video.Open(path, vol, audioNum, audioIndex)
         # [ 1.2.2. Add History ]
         History.Add(path, user, comment)
         # [ 1.2.3. Update pause status for playing ]
@@ -422,6 +423,7 @@ def insert():
       "", \
       True, \
       "00:00:00.00", \
+      1, \
       True)
   Book.AddTop( \
     os.path.join(dirName,fileName), \
@@ -429,6 +431,7 @@ def insert():
     request.query.comment, \
     visible, \
     videoInfo.GetDuration(os.path.join(dirName,fileName)), \
+    request.query.audioIndex, \
     False)
   redirect( \
     "/" + request.query.back + \
@@ -511,6 +514,7 @@ def add():
     request.query.comment, \
     visible, \
     videoInfo.GetDuration(os.path.join(dirName,fileName)), \
+    request.query.audioIndex, \
     False)
   if ("on" == request.query.get('pause')):
     Book.AddLast( \
@@ -519,6 +523,7 @@ def add():
       "", \
       True, \
       "00:00:00.00", \
+      1, \
       True)
   redirect( \
     "/" + request.query.back + \
@@ -534,6 +539,7 @@ def dummy():
     "", \
     True, \
     "00:00:00.00", \
+    1, \
     True)
   redirect( \
     "/search?user=" + request.query.user + \
