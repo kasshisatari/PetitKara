@@ -31,17 +31,15 @@ from bottle import \
   request, route, static_file, redirect, \
   response
 from paste import httpserver as web
-import sqlite3
-import os
-import subprocess
 import Book
 import History
 import File
-import Address
+from Raspi import Address
 import qrcode
 from Raspi import VideoInfo
-import HDMI
+from Raspi import HDMI
 from Raspi import Video
+from Raspi import System
 import Favorite
 import datetime
 
@@ -55,15 +53,14 @@ app = Bottle()   # bottle instance
 pause = False    # pause
 video = None     # video instance
 videoInfo = None # videoInfo instance
+address = None   # address Instance
+hdmi = None      # hdmi instance
+system = None    # system Instance
 
 # Monitor View
 @app.get("/console")
 def console():
-  hostapd = open("/etc/hostapd/hostapd.conf")
-  for line in hostapd:
-    if 0 == line.find("ssid="):
-      ssid = line[5:]
-  hostapd.close()
+  ssid = address.GetSSID()
   return template( \
     'console', \
     ssid=ssid)
@@ -104,7 +101,7 @@ def console():
       else:
         # < Dummy >
         # [ 1.2.4. Switch HDMI Signal ]
-        HDMI.Switch()
+        hdmi.Switch()
         # [ 1.2.5. Update pause status for pausing ]
         pause = True
       # [[ 1.3. Delete Playing Book ]]
@@ -162,13 +159,13 @@ def bookmark():
 @app.get("/shutdown")
 def shutdown():
   # [[[ 1. Shutdown ]]]
-  os.system("sudo shutdown -h now")
+  system.Shutdown()
 
 # Restart OS
 @app.get("/restart")
 def restart():
   # [[[ 1. Restart ]]]
-  os.system("sudo shutdown -r now")
+  system.Restart()
 
 # Posotion
 @app.get("/pos/json")
@@ -256,7 +253,7 @@ def suspend():
   # [[[ 1. Switch HDMI Signal ]]]
   if True is pause and False is video.CheckPlaying():
     # < Pausing >
-    HDMI.Switch()
+    hdmi.Switch()
 
   # [[[ 2. Pause Video ]]]
   video.Pause()
@@ -266,7 +263,7 @@ def suspend():
     # < Not Pausing >
     if False is video.CheckPlaying():
       # < Not Playing >
-      HDMI.Switch()
+      hdmi.Switch()
     # [[ 3.1. Update Pause Status Not Pausing -> Pausing ]]
     pause = True
   else:
@@ -338,7 +335,7 @@ def sync():
   recv = datetime.datetime.strptime(request.query.time, "%Y/%m/%d %H:%M:%S")
   diff = abs((recv - now).total_seconds())
   if (diff > 10):
-    subprocess.call(['sudo', 'date', '--set=' + request.query.time ])
+    system.SetTime(request.query.time)
 
 @app.get("/history")
 def history():
@@ -572,25 +569,6 @@ def refresh():
   File.init()
   redirect("/")
 
-@app.get("/drives/json")
-def drives():
-  # [[[ 1. Drive Number ]]]
-  mount = subprocess.Popen(
-    "ls /media/pi/ | wc -l",
-    stdout = subprocess.PIPE,
-    stderr = subprocess.PIPE,
-    env = {'LANG': 'C'},
-    shell = True
-  )
-  out, err = mount.communicate()
-  outLines = out.decode("ascii", "ignore").splitlines()
-  driveNum = 0
-  for line in outLines:
-    driveNum = line
-
-  # [[[ 2. Return JSON ]]]
-  return "{\"drives\":" + driveNum + "}"
-
 @app.get("/reset")
 def resetAll():
   Book.Reset()
@@ -605,19 +583,21 @@ def resetHistory():
   redirect("/")
 
 # [[[ 1. Initialize HDMI Signal Switcher ]]]
-HDMI.init()
+hdmi = HDMI.HDMI()
 video = Video.Video()
 videoInfo = VideoInfo.VideoInfo()
+address = Address.Address()
+system = System.System()
 
 # [[[ 2. Make QR-Code ]]]
-img = qrcode.make("http://"+Address.Getwlan0()+":8080/")
+img = qrcode.make("http://" + address.GetIP() + ":8080/")
 img.save("static/toppage.png")
 
 # [[[ 3. Refresh File List ]]]
 File.init()
 
 # [[[ 4. Start Browser ]]]
-os.system("chromium-browser --noerrdialogs --kiosk --incognito --no-default-browser-check http://localhost:8080/console &")
+system.StartBrowser()
 
 # [[[ 5. Start Web Server ]]]
 web.serve(app,host="0.0.0.0",port=8080)
