@@ -72,6 +72,10 @@ $.mobile.pushStateEnabled = false;
       <label>
         <input id="pause" name="pause" type="checkbox" />演奏後に一時停止
       </label>
+      <select id="audioIndex" name="audioIndex">
+% option = File.GetAudioTag(id)
+{{!option}}
+      </select>
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>
@@ -94,6 +98,9 @@ $.mobile.pushStateEnabled = false;
       <label>
         <input id="pause" name="pause" type="checkbox" />演奏後に一時停止
       </label>
+      <select id="audioIndex" name="audioIndex">
+{{!option}}
+      </select>
       <input type="submit" value="はい" />
       <a data-role="button" href="/" data-rel="back">いいえ</a>
     </form>
