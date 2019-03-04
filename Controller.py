@@ -34,6 +34,7 @@ from paste import httpserver as web
 import Book
 import History
 import File
+import os
 from Raspi import Address
 import qrcode
 from Raspi import VideoInfo
