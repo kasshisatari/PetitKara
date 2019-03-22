@@ -61,17 +61,3 @@ class Network:
     hostapd.close()
     return ssid
 
-  # Get Password
-  def GetPassword(self):
-    hostapd = open("/etc/hostapd/hostapd.conf")
-    valid = False
-    password = None
-    for line in hostapd:
-      if 0 == line.find("wpa=2"):
-        valid = True
-      else if 0 == line.find("wpa_passphrase="):
-        password = line[15:]
-    hostapd.close()
-    if False == valid:
-      password = None
-    return password
