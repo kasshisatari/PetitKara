@@ -98,4 +98,7 @@ sudo ed /etc/xdg/pcmanfm/LXDE-pi/pcmanfm.conf << EOF
 wq
 EOF
 
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+
 reboot
