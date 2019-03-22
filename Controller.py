@@ -35,7 +35,7 @@ import Book
 import History
 import File
 import os
-from Raspi import Address
+from Raspi import Network
 import qrcode
 from Raspi import VideoInfo
 from Raspi import HDMI
@@ -54,14 +54,14 @@ app = Bottle()   # bottle instance
 pause = False    # pause
 video = None     # video instance
 videoInfo = None # videoInfo instance
-address = None   # address Instance
+network = None   # network Instance
 hdmi = None      # hdmi instance
 system = None    # system Instance
 
 # Monitor View
 @app.get("/console")
 def console():
-  ssid = address.GetSSID()
+  ssid = network.GetSSID()
   return template( \
     'console', \
     ssid=ssid)
@@ -587,11 +587,11 @@ def resetHistory():
 hdmi = HDMI.HDMI()
 video = Video.Video()
 videoInfo = VideoInfo.VideoInfo()
-address = Address.Address()
+network = Network.Network()
 system = System.System()
 
 # [[[ 2. Make QR-Code ]]]
-img = qrcode.make("http://" + address.GetIP() + ":8080/")
+img = qrcode.make("http://" + network.GetIP() + ":8080/")
 img.save("static/toppage.png")
 
 # [[[ 3. Refresh File List ]]]
