@@ -61,3 +61,24 @@ class Network:
     hostapd.close()
     return ssid
 
+  # Get Password
+  def GetPassword(self):
+    hostapd = open("/etc/hostapd/hostapd.conf")
+    valid = False
+    password = None
+    for line in hostapd:
+      if 0 == line.find("wpa=2"):
+        valid = True
+      elif 0 == line.find("wpa_passphrase="):
+        password = line[15:]
+    hostapd.close()
+    if False == valid:
+      password = ""
+    return password
+
+  # Set Password
+  def SetPassword(self, password):
+    if None is password:
+      subprocess.call("sudo sh /home/pi/Desktop/PetitKara/Raspi/disablePassWD.sh", shell=True)
+    else:
+      subprocess.call("sudo sh /home/pi/Desktop/PetitKara/Raspi/enablePassWD.sh " + password, shell=True)
