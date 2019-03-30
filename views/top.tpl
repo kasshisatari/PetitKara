@@ -29,13 +29,14 @@ $.mobile.pushStateEnabled = false;
       </form>
     <a href="#initHistory" data-role="button" data-rel="dialog">履歴初期化</a>
     <a href="#refresh" data-role="button" data-rel="dialog">曲情報更新</a>
+    <a href="config" data-role="button" rel="external">設定</a>
     <a href="#shutdown" data-role="button" data-rel="dialog">シャットダウン</a>
     <a href="#restart" data-role="button" data-rel="dialog">再起動</a>
     <a href="#reset" data-role="button" data-rel="dialog">リセット</a>
     <a href="#attention" data-role="button" data-rel="dialog">注意事項</a>
     <img src="../static/toppage.png">
     </div>
-    <div data-role="footer">Version 1.3.25</div>
+    <div data-role="footer">Version 1.3.26</div>
   </div>
 
   <div data-role="page" id="refresh">

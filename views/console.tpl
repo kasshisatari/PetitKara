@@ -43,6 +43,8 @@ setInterval(playVideo, 5000);
 <br>
 <img src="static/toppage.png">
 <br>
-{{!ssid}}
+SSID:{{!ssid}}
+<br>
+PASS:{{!password}}
 </body>
 </html>
