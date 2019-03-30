@@ -62,9 +62,11 @@ system = None    # system Instance
 @app.get("/console")
 def console():
   ssid = network.GetSSID()
+  password = network.GetPassword()
   return template( \
     'console', \
-    ssid=ssid)
+    ssid=ssid, \
+    password=password)
 
 # Play Video
 @app.get("/play")
@@ -315,6 +317,12 @@ def static(path):
 def top():
   return template('top')
 
+@app.get("/config")
+def config():
+  return template( \
+    'config', \
+    password = network.GetPassword())
+
 @app.get("/search")
 def search():
   return template( \
@@ -547,6 +555,14 @@ def dummy():
 def preview():
   dirName, fileName = File.Get(request.query.fileId)
   return static_file(fileName, root=dirName)
+
+@app.get("/setwifipass")
+def setwifipass():
+  if len(request.query.password) < 8:
+    network.SetPassword(None)
+  else:
+    network.SetPassword(request.query.password)
+  redirect("/")
 
 @app.get("/detail")
 def detail():
