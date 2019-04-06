@@ -29,14 +29,38 @@ import threading
 import sqlite3
 import os
 from datetime import datetime
-from Raspi import VideoInfo
 import History
+
+# Check Raspbian
+def CheckRaspbian():
+  flag = False
+  issue = open(os.path.sep + "etc" + os.path.sep + "issue")
+  for line in issue:
+    if 0 == line.find("Raspbian"):
+      flag = True
+  issue.close()
+  return flag
+
+# Check Windows
+def CheckWindows():
+  flag = False
+  if os.name.find("nt"):
+    flag = True
+  return flag
+
+if True is CheckRaspbian():
+  from Raspi import VideoInfo
+  from Raspi import System
+elif True is CheckWindow():
+  pass
+
 fileName = "file.db"    # DB File Name  
 limit = 20              # Max Search Record Per Page
 lock = threading.Lock() # Lock Object
 conn = None             # SQLite Connection
 c = None                # SQLite Cursor
 videoInfo = None        # videoInfo instance
+system = None           # system instance
 
 # Get FileId
 def GetFileId(
@@ -50,7 +74,7 @@ def GetFileId(
   lock.acquire()
 
   # [[[ 2. Check DB File ]]]
-  if not os.path.exists("./" + fileName):
+  if not os.path.exists("." + os.path.sep + fileName):
     # < File not Exists >
     lock.release()
     return None
@@ -73,15 +97,16 @@ def GetFileId(
 
 # Get movie file path
 def recFiles(directories): # string for filepath
-  for root, dirs, files in os.walk(directories):
-    for file in files:
-      if -1 != root.find('/$RECYCLE.BIN/'):
-        continue
-      if   file[-4:] == ".avi" \
-        or file[-4:] == ".mp4" \
-        or file[-4:] == ".flv" \
-        or file[-4:] == ".mkv":
-        yield (file,root)
+  for directory in directories:
+    for root, dirs, files in os.walk(directory):
+      for file in files:
+        if -1 != root.find(os.path.sep + '$RECYCLE.BIN' + os.path.sep):
+          continue
+        if   file[-4:] == ".avi" \
+          or file[-4:] == ".mp4" \
+          or file[-4:] == ".flv" \
+          or file[-4:] == ".mkv":
+          yield (file,root)
 
 # Get file information from FileID
 def Get(
@@ -93,7 +118,7 @@ def Get(
   # [[[ 1. Lock ]]]
   lock.acquire()
   # [[[ 2. Check DB File ]]]
-  if not os.path.exists("./" + fileName):
+  if not os.path.exists("." + os.path.sep + fileName):
     # < File not Exists >
     lock.release()
     return "","" 
@@ -118,7 +143,7 @@ def Count(keywords): # string with <li></li> elements
   # [[[ 1. Lock ]]]
   lock.acquire()
   # [[[ 2. Check DB File ]]]
-  if not os.path.exists("./" + fileName):
+  if not os.path.exists("." + os.path.sep + fileName):
     # < File not Exists >
     lock.release()
     return "0"
@@ -217,7 +242,7 @@ def Search(keywords,user,page): # string with <li></li> elements
   lock.acquire()
 
   # [[[ 2. Check DB File ]]]
-  if not os.path.exists("./" + fileName):
+  if not os.path.exists("." + os.path.sep + fileName):
     # < File not Exists >
     lock.release()
     return ""
@@ -356,7 +381,7 @@ def Delete(): # None
   if conn is not None:
     conn.close
   # [[[ 2. Delete DB ]]]
-  if os.path.exists("./" + fileName):
+  if os.path.exists("." + os.path.sep + fileName):
     os.remove(fileName)
  
 # Initialize DB
@@ -364,6 +389,7 @@ def init(): # None
   global lock
   global conn
   global c
+  global system
   # [[[ 1. Lock ]]]
   lock.acquire()
   # [[[ 2. Delete DB ]]]
@@ -383,7 +409,9 @@ def init(): # None
     ");")
   # [[[ 5. Insert File Information ]]]
   fileId = 0
-  for row in recFiles('/media/pi/'):
+  if None is system:
+    system = System.System()
+  for row in recFiles(system.GetDir()):
     c.execute("insert into File values(" +
       str(fileId) + "," +
       "\"" + row[1] + "\"" + "," +

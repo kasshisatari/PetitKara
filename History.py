@@ -221,7 +221,7 @@ def Reset():
     conn.close()
 
   # [[[ 3. Delete DB ]]]
-  if os.path.exists("./" + fileName):
+  if os.path.exists("." + os.path.sep + fileName):
     os.remove(fileName)
 
   # [[[ 4. Initialize DB]]]

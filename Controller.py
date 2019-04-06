@@ -26,23 +26,45 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import os
+import re
+import datetime
 from bottle import \
   Bottle, run, get, template, \
   request, route, static_file, redirect, \
   response
 from paste import httpserver as web
+import qrcode
 import Book
 import History
 import File
-import os
-from Raspi import Network
-import qrcode
-from Raspi import VideoInfo
-from Raspi import HDMI
-from Raspi import Video
-from Raspi import System
 import Favorite
-import datetime
+
+# Check Raspbian
+def CheckRaspbian():
+  flag = False
+  issue = open(os.path.sep + "etc" + os.path.sep + "issue")
+  for line in issue:
+    if 0 == line.find("Raspbian"):
+      flag = True
+  issue.close()
+  return flag
+
+# Check Windows
+def CheckWindows():
+  flag = False
+  if os.name.find("nt"):
+    flag = True
+  return flag
+
+if True is CheckRaspbian():
+  from Raspi import Network
+  from Raspi import VideoInfo
+  from Raspi import HDMI
+  from Raspi import Video
+  from Raspi import System
+elif True is CheckWindow():
+  pass
 
 path = None      # playing file path
 user = None      # playing file user
@@ -315,7 +337,12 @@ def static(path):
 
 @app.get("/")
 def top():
-  return template('top')
+  ssid = network.GetSSID()
+  password = network.GetPassword()
+  return template( \
+    'top', \
+    ssid = ssid, \
+    password = password)
 
 @app.get("/config")
 def config():
@@ -558,7 +585,8 @@ def preview():
 
 @app.get("/setwifipass")
 def setwifipass():
-  if len(request.query.password) < 8:
+  regexp = re.compile(r'^[\x20-\x7E]*$')
+  if len(request.query.password) < 8 or None is regexp.search(request.query.password):
     network.SetPassword(None)
   else:
     network.SetPassword(request.query.password)

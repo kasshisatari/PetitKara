@@ -204,7 +204,7 @@ def Reset(): # None
     conn.close()
 
   # [[[ 3. Delete Favorite File ]]]
-  if os.path.exists("./" + fileName):
+  if os.path.exists("." + os.path.sep + fileName):
     os.remove(fileName)
 
   # [[[ 4. Initialize Favorite File ]]]
