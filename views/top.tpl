@@ -35,8 +35,14 @@ $.mobile.pushStateEnabled = false;
     <a href="#reset" data-role="button" data-rel="dialog">リセット</a>
     <a href="#attention" data-role="button" data-rel="dialog">注意事項</a>
     <img src="../static/toppage.png">
+    <br>
+    SSID:{{!ssid}}
+    <br>
+    PASS:{{!password}}
     </div>
-    <div data-role="footer">Version 1.3.26</div>
+    <div data-role="footer">
+      Version 1.3.27
+    </div>
   </div>
 
   <div data-role="page" id="refresh">
