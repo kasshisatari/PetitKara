@@ -42,3 +42,6 @@ class System:
 
   def StartBrowser(self):
     os.system("chromium-browser --noerrdialogs --kiosk --incognito --no-default-browser-check http://localhost:8080/console &")
+
+  def GetDir(self):
+    return [os.path.sep + 'media' + os.path.sep + 'pi' + os.path.sep]
