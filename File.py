@@ -34,7 +34,10 @@ import History
 # Check Raspbian
 def CheckRaspbian():
   flag = False
-  issue = open(os.path.sep + "etc" + os.path.sep + "issue")
+  filePath = os.path.sep + "etc" + os.path.sep + "issue"
+  if False is os.path.exists(filePath):
+    return False
+  issue = open(filePath)
   for line in issue:
     if 0 == line.find("Raspbian"):
       flag = True
@@ -44,14 +47,16 @@ def CheckRaspbian():
 # Check Windows
 def CheckWindows():
   flag = False
-  if os.name.find("nt"):
+  if 0 == os.name.find("nt"):
     flag = True
   return flag
 
 if True is CheckRaspbian():
   from Raspi import VideoInfo
   from Raspi import System
-elif True is CheckWindow():
+elif True is CheckWindows():
+  from Win import VideoInfo
+  from Win import System
   pass
 
 fileName = "file.db"    # DB File Name  

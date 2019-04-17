@@ -43,7 +43,10 @@ import Favorite
 # Check Raspbian
 def CheckRaspbian():
   flag = False
-  issue = open(os.path.sep + "etc" + os.path.sep + "issue")
+  filePath = os.path.sep + "etc" + os.path.sep + "issue"
+  if False is os.path.exists(filePath):
+    return False
+  issue = open(filePath)
   for line in issue:
     if 0 == line.find("Raspbian"):
       flag = True
@@ -53,7 +56,7 @@ def CheckRaspbian():
 # Check Windows
 def CheckWindows():
   flag = False
-  if os.name.find("nt"):
+  if 0 == os.name.find("nt"):
     flag = True
   return flag
 
@@ -63,7 +66,12 @@ if True is CheckRaspbian():
   from Raspi import HDMI
   from Raspi import Video
   from Raspi import System
-elif True is CheckWindow():
+elif True is CheckWindows():
+  from Win import Network
+  from Win import VideoInfo
+  from Win import HDMI
+  from Win import Video
+  from Win import System
   pass
 
 path = None      # playing file path
@@ -637,9 +645,10 @@ video = Video.Video()
 videoInfo = VideoInfo.VideoInfo()
 network = Network.Network()
 system = System.System()
+vol = video.GetDefaultVolume()
 
 # [[[ 2. Make QR-Code ]]]
-img = qrcode.make("http://" + network.GetIP() + ":8080/")
+img = qrcode.make("http://" + network.GetIP() + ":50000/")
 img.save("static/toppage.png")
 
 # [[[ 3. Refresh File List ]]]
@@ -649,5 +658,5 @@ File.init()
 system.StartBrowser()
 
 # [[[ 5. Start Web Server ]]]
-web.serve(app,host="0.0.0.0",port=8080)
+web.serve(app,host="0.0.0.0",port=50000)
 
