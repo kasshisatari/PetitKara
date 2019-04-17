@@ -44,10 +44,10 @@ class Video:
     )
     out, err = aplay.communicate()
     aplayLines = out.decode("ascii", "ignore").splitlines()
-    alsa = False # True: Exist ALSA Device, False: Not Exist
+    self.alsa = False # True: Exist ALSA Device, False: Not Exist
     for line in aplayLines:
       if -1 != line.find("sndrpijustboomd"): # JustBoom DAC HAT
-        alsa = True
+        self.alsa = True
         break;
 
     # [[[ 2. Initialize ]]]
@@ -210,3 +210,7 @@ class Video:
       )
     except:
       pass
+
+  # Default Volume
+  def GetDefaultVolume(self): # Integer [dB]
+    return -4500
