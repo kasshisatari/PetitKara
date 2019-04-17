@@ -224,7 +224,7 @@ def currentinfo():
     pos = video.Position()
     return "{" + \
       "\"play\":true," + \
-      "\"path\":\"" + path + "\"," + \
+      "\"path\":\"" + path.replace("\\", "/") + "\"," + \
       "\"pos\":" + str(video.Position()) + "," + \
       "\"duration\":\"" + duration + "\"," + \
       "\"user\":\"" + user + "\"," + \
