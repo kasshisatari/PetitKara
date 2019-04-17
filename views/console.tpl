@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="static/jquery-1.11.1.min.js"></script>
+<title>PetitKara</title>
 </head>
 <body>
 <table border="1" id="list">
