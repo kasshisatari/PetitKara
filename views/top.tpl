@@ -41,7 +41,7 @@ $.mobile.pushStateEnabled = false;
     PASS:{{!password}}
     </div>
     <div data-role="footer">
-      Version 1.3.27
+      Version 1.3.28
     </div>
   </div>
 
@@ -142,7 +142,7 @@ var xhr = new XMLHttpRequest();
 var day = new Date();
 xhr.open("GET", "sync?time=" + 
   day.getFullYear() + "/" + 
-  day.getMonth()+1 + "/" + 
+  String(Number(Number(day.getMonth())+1)) + "/" + 
   day.getDate() + " " + 
   day.getHours() + ":" + 
   day.getMinutes() + ":" + 
