@@ -513,10 +513,14 @@ def delete():
 
 @app.get("/reserve")
 def reserve():
-  return template( \
-    'reserve', \
-    name = request.query.user, \
-    id = request.query.bookId)
+  if None is Book.ReserveDetail(request.query.bookId):
+    redirect( \
+      "/playlist?user=" + request.query.user)
+  else:
+    return template( \
+      'reserve', \
+      name = request.query.user, \
+      id = request.query.bookId)
 
 @app.get("/moveup")
 def moveup():

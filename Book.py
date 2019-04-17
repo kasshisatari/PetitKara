@@ -445,6 +445,7 @@ def ReserveDetail(
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
+  list = None
 
   # [[[ 2. Query ]]]
   for row in c.execute("select * from Book where BookId = ?", [id]):
