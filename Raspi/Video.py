@@ -74,7 +74,7 @@ class Video:
       stdin=subprocess.PIPE)
     # [[[ 3. Initialize Audio Stream Switching ]]]
     self.audioNum = audioNum
-    self.audioStream = 0
+    self.audioStream = audioIndex - 1
     self.vol = vol
 
     # [[[ 4. D-Bus ]]]
