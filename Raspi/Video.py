@@ -52,7 +52,7 @@ class Video:
 
     # [[[ 2. Initialize ]]]
     # omxplayer command line
-    if False == alsa:
+    if False == self.alsa:
       self.start = "omxplayer --no-osd -b -o hdmi --vol "
     else:
       self.start = "omxplayer --no-osd -b -o alsa:plughw:1,0 --vol "
