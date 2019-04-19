@@ -4,6 +4,7 @@
 <title>PetitKara</title>
 </head>
 <body>
+<p id="pause"></p>
 <table border="1" id="list">
 </table>
 <script>
@@ -22,12 +23,29 @@ var reqListener = function()
   }
 }
 
+var pauseListener = function()
+{
+  var json = $.parseJSON(this.responseText);
+  if (true == json.playing)
+  {
+    $("#pause").text("一時停止中");
+  }
+  else
+  {
+    $("#pause").text("");
+  }
+}
+
 var reload = function()
 {
-  var xhr = new XMLHttpRequest();
-  xhr.addEventListener("load", reqListener);
-  xhr.open("GET", "playlist/json");
-  xhr.send();
+  var playlist = new XMLHttpRequest();
+  playlist.addEventListener("load", reqListener);
+  playlist.open("GET", "playlist/json");
+  playlist.send();
+  var pause = new XMLHttpRequest();
+  pause.addEventListener("load", pauseListener);
+  pause.open("GET", "playing/json");
+  pause.send();
 }
 
 var playVideo = function()
