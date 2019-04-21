@@ -26,6 +26,7 @@ $.mobile.pushStateEnabled = false;
     <form method="GET" action="setwifipass" data-ajax="false">
       <label for="password">Wifiパスワード<br>8文字未満はパスワード無効<br>要再起動</label>
       <input id="password" name="password" type="text" value="{{!password}}" maxlength="63" />
+      {{!rca}}
       <input type="submit" value="変更" />
     </form>
   </div>

@@ -29,7 +29,7 @@ $.mobile.pushStateEnabled = false;
       </form>
     <a href="#initHistory" data-role="button" data-rel="dialog">履歴初期化</a>
     <a href="#refresh" data-role="button" data-rel="dialog">曲情報更新</a>
-    <a href="config" data-role="button" rel="external">設定</a>
+{{!config}}
     <a href="#shutdown" data-role="button" data-rel="dialog">シャットダウン</a>
     <a href="#restart" data-role="button" data-rel="dialog">再起動</a>
     <a href="#reset" data-role="button" data-rel="dialog">リセット</a>
@@ -41,7 +41,7 @@ $.mobile.pushStateEnabled = false;
     PASS:{{!password}}
     </div>
     <div data-role="footer">
-      Version 1.3.30
+      Version 1.3.31
     </div>
   </div>
 
