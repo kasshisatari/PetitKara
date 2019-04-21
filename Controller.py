@@ -356,16 +356,34 @@ def static(path):
 def top():
   ssid = network.GetSSID()
   password = network.GetPassword()
+  configMenu = ""
+  if 0 > system.GetHW().find("Win"):
+    configMenu = "<a href=\"config\" data-role=\"button\" rel=\"external\">設定</a>"
   return template( \
     'top', \
     ssid = ssid, \
-    password = password)
+    password = password, \
+    config = configMenu)
 
 @app.get("/config")
 def config():
+  if 0 == system.GetHW().find("Raspi:ALSA"):
+    port = video.GetCurrentAudioPort()
+    rca = "<label for=\"port\">音声出力切替(次の再生から有効)</label>"
+    rca += "<select name=\"port\" id=\"port\">"
+    if 0 == port.find("HDMI"):
+      rca += "<option value=\"0\" selected>HDMI</option>"
+      rca += "<option value=\"1\">RCA</option>"
+    else:
+      rca += "<option value=\"0\">HDMI</option>"
+      rca += "<option value=\"1\" selected>RCA</option>"
+    rca += "</select>"
+  else:
+    rca = "<input id=\"port\" name=\"port\" type=\"hidden\" value=\"0\" />"
   return template( \
     'config', \
-    password = network.GetPassword())
+    password = network.GetPassword(), \
+    rca = rca)
 
 @app.get("/search")
 def search():
@@ -623,11 +641,19 @@ def preview():
 
 @app.get("/setwifipass")
 def setwifipass():
+  # [[[ 1. Wifi ]]]
   regexp = re.compile(r'^[\x20-\x7E]*$')
   if len(request.query.password) < 8 or None is regexp.search(request.query.password):
     network.SetPassword(None)
   else:
     network.SetPassword(request.query.password)
+  # [[[ 2. AudioPort ]]]
+  if 0 == request.query.port.find("0"):
+    # < HDMI >
+    video.SetCurrentAudioPort("HDMI")
+  else:
+    # < RCA >
+    video.SetCurrentAudioPort("RCA")
   redirect("/")
 
 @app.get("/detail")
