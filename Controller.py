@@ -491,25 +491,17 @@ def playlist():
 
 @app.get("/resttime/json")
 def resttime():
-  ms = 0
+  sec = 0
   try:
     val = re.split('[:.]', duration)
-    ms += int(val[0])*100*60*60
-    ms += int(val[1])*100*60
-    ms += int(val[2])*100
-    ms += int(val[3])
-    ms -= video.Position()*100
+    sec += int(val[0])*60*60
+    sec += int(val[1])*60
+    sec += int(val[2])
+    sec -= video.Position()
   except:
     pass
-  try:
-    val = re.split('[:.]', Book.GetTotalReserveTime())
-    ms += int(val[0])*100*60*60
-    ms += int(val[1])*100*60
-    ms += int(val[2])*100
-    ms += int(val[3])
-  except:
-    pass
-  return "{\"resttime\": " + str(int(ms/100)) + "}"
+  sec += Book.GetTotalReserveTime()
+  return "{\"resttime\": " + str(int(sec)) + "}"
 
 @app.get("/playlist/json")
 def playlist():

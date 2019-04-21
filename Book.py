@@ -376,39 +376,23 @@ def Swap(
   return True
 
 # Get Total Reserve Time
-def GetTotalReserveTime(): # String of (%HH:%MM:%SS.%10MS)
+def GetTotalReserveTime(): # Integer[sec]
   # [[[ 1. Initialize Reserve Time ]]]
-  ms = 0 # [ Reserve Time by 10ms]
+  sec = 0 # [ Reserve Time ]
 
   # [[[ 2. Sum Reserve Time with 10ms ]]]
   for row in List():
     # [[ 2.1. Split Delimiter ]]
     val = re.split('[:.]',row[6])
     # [[ 2.2. Add Hour ]]
-    ms += int(val[0])*100*60*60
+    sec += int(val[0])*60*60
     # [[ 2.3. Add Minute ]]
-    ms += int(val[1])*100*60
+    sec += int(val[1])*60
     # [[ 2.4. Add Second ]]
-    ms += int(val[2] + 10)*100
-    # [[ 2.5. Add 10 mili-Second ]]
-    ms += int(val[3])
-
-  # [[[ 3. Pretty Print for %HH:%MM:%SS.%10MS ]]]
-  # [[ 3.1. Hour ]]
-  hour = int(ms/(100*60*60))
-  # [[ 3.2. Minute ]]
-  minute = int(ms%(100*60*60)/(100*60))
-  # [[ 3.3. Second ]]
-  second = int(ms%(100*60)/(100))
-  # [[ 3.4. 10 mili-Second ]]
-  ms = int(ms%100)
+    sec += int(val[2]) + 10
 
   # [[[ 4. Return Total Reserve Time ]]]
-  return \
-    str(hour).zfill(2)+":"+\
-    str(minute).zfill(2)+":"+\
-    str(second).zfill(2)+"."+\
-    str(ms).zfill(2)
+  return sec
 
 # Get Reserve Detail
 def ReserveDetail(
