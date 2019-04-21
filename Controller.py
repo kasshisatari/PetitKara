@@ -257,8 +257,11 @@ def current():
 # Stop Video
 @app.get("/stop")
 def stop():
+  global duration
+
   # [[[ 1. Stop Video ]]]
   video.Stop()
+  duration = None
 
   # [[[ 2. Redirect Previous View ]]]
   redirect( \
@@ -486,6 +489,28 @@ def playlist():
     'playlist', \
     name = request.query.user)
 
+@app.get("/resttime/json")
+def resttime():
+  ms = 0
+  try:
+    val = re.split('[:.]', duration)
+    ms += int(val[0])*100*60*60
+    ms += int(val[1])*100*60
+    ms += int(val[2])*100
+    ms += int(val[3])
+    ms -= video.Position()*100
+  except:
+    pass
+  try:
+    val = re.split('[:.]', Book.GetTotalReserveTime())
+    ms += int(val[0])*100*60*60
+    ms += int(val[1])*100*60
+    ms += int(val[2])*100
+    ms += int(val[3])
+  except:
+    pass
+  return "{\"resttime\": " + str(int(ms/100)) + "}"
+
 @app.get("/playlist/json")
 def playlist():
   list = '['
@@ -494,7 +519,8 @@ def playlist():
     if False == firstLine:
       list = list + ","
     firstLine = False
-    list = list + "{\"user\":\"" + row[3] + "\","
+    list = list + "{\"id\":" + str(row[0]) + ","
+    list = list + "\"user\":\"" + row[3] + "\","
     if 1 == row[5]:
       list = list + "\"song\":\"" + os.path.basename(row[2]) + "\","
     else:

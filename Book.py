@@ -375,31 +375,6 @@ def Swap(
 
   return True
 
-# Get Playlist Tags
-def Playlist(
-      user # String(In): User Name
-    ): # String with HTML
-  # [[[ 1. Initialize Book List ]]]
-  list = '' # Book List
-
-  # [[[ 2. Add Book List URLs ]]]
-  for row in List():
-    if (1 == row[5]):
-      title = os.path.basename(row[2])
-    else:
-      title = u"非公開"
-    list = list + \
-      "<li><a href=\"reserve?user=" + \
-      user + \
-      "&bookId=" + \
-      str(row[0]) + \
-      "\" rel=\"external\">" + \
-      title + \
-      "</a></li>"
-
-  # [[[ 3. Return Book List URLs ]]]
-  return list
-
 # Get Total Reserve Time
 def GetTotalReserveTime(): # String of (%HH:%MM:%SS.%10MS)
   # [[[ 1. Initialize Reserve Time ]]]
@@ -414,7 +389,7 @@ def GetTotalReserveTime(): # String of (%HH:%MM:%SS.%10MS)
     # [[ 2.3. Add Minute ]]
     ms += int(val[1])*100*60
     # [[ 2.4. Add Second ]]
-    ms += int(val[2])*100
+    ms += int(val[2] + 10)*100
     # [[ 2.5. Add 10 mili-Second ]]
     ms += int(val[3])
 
