@@ -384,7 +384,7 @@ def Delete(): # None
   global conn
   # [[[ 1. Close DB ]]]
   if conn is not None:
-    conn.close
+    conn.close()
   # [[[ 2. Delete DB ]]]
   if os.path.exists("." + os.path.sep + fileName):
     os.remove(fileName)
