@@ -59,6 +59,34 @@ class Video:
     self.proc = None       # omxplayer process
     self.stopThread = None # stop thread
 
+  # Get HDMI or RCA
+  def GetCurrentAudioPort(self): # String (HDMI or RCA)
+    # [[[ 1. Check HW ]]]
+    if False is self.alsa:
+      return "HDMI"
+
+    # [[[ 2. Check command line ]]]
+    if 0 < self.start.find("alsa"):
+      return "RCA"
+    else:
+      return "HDMI"
+
+  # Set HDMI or RCA
+  def SetCurrentAudioPort(
+        self, # instance
+        port  # "HDMI" or "RCA"
+      ): # None
+    # [[[ 1. Check HW ]]]
+    if False is self.alsa:
+      return
+
+    # [[[ 2. Set command line ]]]
+    if 0 == port.find("HDMI"):
+      self.start = "omxplayer --no-osd -b -o hdmi --vol "
+    else:
+      self.start = "omxplayer --no-osd -b -o alsa:plughw:1,0 --vol "
+
+
   # Open and Playing Video
   def Open(self,path,vol,audioNum, audioIndex) : # None
     # [[[ 1. Make playing command ]]]

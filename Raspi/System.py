@@ -31,6 +31,27 @@ import os
 import subprocess
 
 class System:
+  def __init__(self):
+    # [[[ 1. Check ALSA Device ]]]
+    aplay = subprocess.Popen(
+      "aplay -L",
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE,
+      env={'LANG':'C'},
+      shell=True
+    )
+    out, err = aplay.communicate()
+    aplayLines = out.decode("ascii", "ignore").splitlines()
+    alsa = False # True: Exist ALSA Device, False: Not Exist
+    for line in aplayLines:
+      if -1 != line.find("sndrpijustboomd"): # JustBoom DAC HAT
+        alsa = True
+        break;
+    if True is alsa:
+      self.hw = "Raspi:ALSA"
+    else:
+      self.hw = "Raspi"
+
   def SetTime(self, time):
     subprocess.call(['sudo', 'date', '--set=' + time ])
 
