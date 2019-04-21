@@ -29,6 +29,7 @@
 import os
 import re
 import datetime
+import threading
 from bottle import \
   Bottle, run, get, template, \
   request, route, static_file, redirect, \
@@ -74,19 +75,20 @@ elif True is CheckWindows():
   from Win import System
   pass
 
-path = None      # playing file path
-user = None      # playing file user
-comment = None   # playing file comment
-duration = None  # playing file duration
-audioNum = 0     # playing file audio stream
-vol = -4500      # current volume
-app = Bottle()   # bottle instance
-pause = False    # pause
-video = None     # video instance
-videoInfo = None # videoInfo instance
-network = None   # network Instance
-hdmi = None      # hdmi instance
-system = None    # system Instance
+path = None             # playing file path
+user = None             # playing file user
+comment = None          # playing file comment
+duration = None         # playing file duration
+audioNum = 0            # playing file audio stream
+vol = -4500             # current volume
+app = Bottle()          # bottle instance
+pause = False           # pause
+video = None            # video instance
+videoInfo = None        # videoInfo instance
+network = None          # network Instance
+hdmi = None             # hdmi instance
+system = None           # system Instance
+lock = threading.Lock() # Lock Object
 
 # Monitor View
 @app.get("/console")
@@ -113,7 +115,9 @@ def console():
     # < Can Play >
     if False is video.CheckPlaying():
       # < Not Playing >
-      # [[ 1.1. Get and Update First Reservation ]]
+      # [[ 1.1. Lock ]]
+      lock.acquire()
+      # [[ 1.2. Get and Update First Reservation ]]
       bookList = Book.List()[0]
       path = bookList[2]
       user = bookList[3]
@@ -139,6 +143,8 @@ def console():
         pause = True
       # [[ 1.3. Delete Playing Book ]]
       Book.Delete(bookList[0])
+      # [[ 1.4. Unlock ]]
+      lock.release()
 
 # Favorites View
 @app.get("/favorites")
@@ -491,6 +497,7 @@ def playlist():
 
 @app.get("/resttime/json")
 def resttime():
+  lock.acquire()
   sec = 0
   try:
     val = re.split('[:.]', duration)
@@ -501,6 +508,7 @@ def resttime():
   except:
     pass
   sec += Book.GetTotalReserveTime()
+  lock.release()
   return "{\"resttime\": " + str(int(sec)) + "}"
 
 @app.get("/playlist/json")
