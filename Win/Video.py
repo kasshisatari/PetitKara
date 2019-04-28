@@ -39,6 +39,7 @@ class Video:
     self.instance = vlc.Instance()
     self.player = self.instance.media_player_new()
     self.stopThread = None # stop thread
+    self.vol = self.GetDefaultVolume()
 
   # Open and Playing Video
   def Open(self,path,vol,audioNum, audioIndex) : # None
