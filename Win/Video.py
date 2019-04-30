@@ -74,7 +74,7 @@ class Video:
     # [[[ 2. Monitor Video End ]]]
     while -1 == self.player.get_media().get_duration():
       time.sleep(0.1)
-    while self.player.get_time() < self.player.get_media().get_duration():
+    while self.player.get_time() < self.player.get_media().get_duration() - 1000:
       time.sleep(0.5)
 
     # [[[ 3. Terminate Playing Video ]]]
