@@ -25,7 +25,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 sudo apt-get update
-sudo apt-get install -y hostapd dnsmasq unclutter
+sudo apt-get install -y hostapd dnsmasq unclutter exfat-fuse exfat-utils
 sudo aptitude install -y ntfs-3g
 sudo ed /etc/network/interfaces.d/wlan0 << EOF
 a
