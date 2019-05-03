@@ -59,7 +59,6 @@ var reload = function()
   xhr.send();
 }
 reload();
-setInterval(reload, 5000);
 </script>
 </body>
 </html>
