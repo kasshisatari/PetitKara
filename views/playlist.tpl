@@ -54,7 +54,9 @@ var playlistListener = function()
       "<li><a href=\"reserve?user=" + "{{!name}}" + 
       "&bookId=" + String(records[i].id) + 
       "\" rel=\"external\">" + 
-      records[i].song + 
+      records[i].user + "<br>" + 
+      records[i].song + "<br>" + 
+      records[i].comment + 
       "</a></li>");
   }
   $('#list').listview('refresh');
