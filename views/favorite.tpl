@@ -29,6 +29,9 @@ $.mobile.pushStateEnabled = false;
 % import File
 % list = File.Detail(id,name)
 {{!list}}
+    <center>
+      <video src="preview?fileId={{!id}}" width=300 controls muted controlslist="nodownload"></video>
+    </center>
   </div>
 
   <div data-role="footer">
