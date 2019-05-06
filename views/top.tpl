@@ -41,7 +41,7 @@ $.mobile.pushStateEnabled = false;
     PASS:{{!password}}
     </div>
     <div data-role="footer">
-      Version 1.4.3
+      Version 1.4.4
     </div>
   </div>
 
