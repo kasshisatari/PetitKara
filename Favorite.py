@@ -123,6 +123,7 @@ def Get(
     [user, idx])
 
   row = c.fetchone()
+  conn.rollback()
 
   # [[[ 3. Unlock ]]]
   lock.release()
