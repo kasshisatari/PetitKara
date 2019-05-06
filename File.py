@@ -217,7 +217,7 @@ def Navi(keywords, user, page): # string with <a></a> elements
       u"<a href=\"list?user=" + user + \
       u"&page=" + str(nextPage) + \
       u"&keyword=" + keywords + \
-      u"\" rel=\"external\">次へ</a><br>"
+      u"\" rel=\"external\" class=\"ui-btn-right\">次へ</a><br><br>"
   elif maxPage + 1 == nextPage:
     # < No Next Page >
     return \
