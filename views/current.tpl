@@ -30,7 +30,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="footer">
     <a href="#" id="button-down">音量小</a>
     <a href="#" id="button-up">音量大</a>
-    <a href="#" id="button-rew">巻き戻し</a>
+    <a href="#" id="button-rew">早戻し</a>
     <a href="#" id="button-ff">早送り</a>
     <a href="#" id="button-audio">音声切り替え</a>
     <a href="#" id="button-pause"></a>
