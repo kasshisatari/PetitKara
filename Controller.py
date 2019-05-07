@@ -518,11 +518,12 @@ def resttime():
   lock.acquire()
   sec = 0
   try:
-    val = re.split('[:.]', duration)
-    sec += int(val[0])*60*60
-    sec += int(val[1])*60
-    sec += int(val[2])
-    sec -= video.Position()
+    if True is video.CheckPlaying():
+      val = re.split('[:.]', duration)
+      sec += int(val[0])*60*60
+      sec += int(val[1])*60
+      sec += int(val[2])
+      sec -= video.Position()
   except:
     pass
   sec += Book.GetTotalReserveTime()
