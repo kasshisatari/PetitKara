@@ -117,34 +117,39 @@ def console():
       # < Not Playing >
       # [[ 1.1. Lock ]]
       lock.acquire()
-      # [[ 1.2. Get and Update First Reservation ]]
-      bookList = Book.List()[0]
-      path = bookList[2]
-      user = bookList[3]
-      comment = bookList[4]
-      dummy = bookList[8]
-      audioIndex = int(bookList[7])
-      duration = videoInfo.GetDuration(path)
-      audioNum = videoInfo.GetAudioNum(path)
-      # [[ 1.2. Check Dummy ]]
-      if 0 == dummy:
-        # < Not Dummy >
-        # [ 1.2.1. Play Video ]
-        video.Open(path, vol, audioNum, audioIndex)
-        # [ 1.2.2. Add History ]
-        History.Add(path, user, comment)
-        # [ 1.2.3. Update pause status for playing ]
-        pause = False
-      else:
-        # < Dummy >
-        # [ 1.2.4. Switch HDMI Signal ]
-        hdmi.Switch()
-        # [ 1.2.5. Update pause status for pausing ]
-        pause = True
-      # [[ 1.3. Delete Playing Book ]]
-      Book.Delete(bookList[0])
-      # [[ 1.4. Unlock ]]
-      lock.release()
+      try:
+        # [[ 1.2. Get and Update First Reservation ]]
+        bookList = Book.List()[0]
+        path = bookList[2]
+        user = bookList[3]
+        comment = bookList[4]
+        dummy = bookList[8]
+        audioIndex = int(bookList[7])
+        duration = videoInfo.GetDuration(path)
+        audioNum = videoInfo.GetAudioNum(path)
+        # [[ 1.2. Check Dummy ]]
+        if 0 == dummy:
+          # < Not Dummy >
+          # [ 1.2.1. Play Video ]
+          video.Open(path, vol, audioNum, audioIndex)
+          # [ 1.2.2. Add History ]
+          History.Add(path, user, comment)
+          # [ 1.2.3. Update pause status for playing ]
+          pause = False
+        else:
+          # < Dummy >
+          # [ 1.2.4. Switch HDMI Signal ]
+          hdmi.Switch()
+          # [ 1.2.5. Update pause status for pausing ]
+          pause = True
+      except:
+        import traceback
+        traceback.print_exc()
+      finally:
+        # [[ 1.3. Delete Playing Book ]]
+        Book.Delete(bookList[0])
+        # [[ 1.4. Unlock ]]
+        lock.release()
 
 # Favorites View
 @app.get("/favorites")
