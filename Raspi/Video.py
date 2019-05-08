@@ -110,8 +110,16 @@ class Video:
     while True == flag:
       try:
         while False == os.path.exists("/tmp/omxplayerdbus.pi"):
+          if self.proc.poll() is not None:
+            # < omxplayer has terminated >
+            self.proc = None
+            return
           time.sleep(0.05)
         time.sleep(0.05)
+        if self.proc.poll() is not None:
+          # < omxplayer has terminated >
+          self.proc = None
+          return
         dbusAddress = open("/tmp/omxplayerdbus.pi", "r")
         self.bus = dbus.bus.BusConnection(dbusAddress.readline()[0:-1])
         dbusAddress.close()
