@@ -32,10 +32,6 @@ $.mobile.pushStateEnabled = false;
 
   <div data-role="footer">
     <div data-role="navbar">
-      <ul>
-        <li><a href="#add" data-rel="dialog">予約</a></li>    
-        <li><a href="#insertcheck" data-rel="dialog">割り込み予約</a></li>    
-      </ul>
     </div>
   </div>
 
