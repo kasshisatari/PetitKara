@@ -24,4 +24,4 @@ REM WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 REM ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 REM OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-%localappdata%\Programs\Python\Python37-32\python.exe Controller.py 2>> stdrr.txt >> stdout.txt
+%localappdata%\Programs\Python\Python37-32\python.exe Controller.py 2>> stderr.txt >> stdout.txt
