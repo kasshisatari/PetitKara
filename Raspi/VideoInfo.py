@@ -25,6 +25,8 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import subprocess
+import re
+import os
 
 class VideoInfo:
   def __init__(self):
@@ -47,6 +49,8 @@ class VideoInfo:
     self.duration = ""
     self.audioNum = 0
     self.audioName = []
+    self.videoEncode = ""
+    self.resolution = ""
     audioIndex = 1
     for line in ifconfigLines:
       # [[ 2.1. Get Duration: ]]
@@ -55,12 +59,40 @@ class VideoInfo:
         self.duration = blocks[1][0:-1]
       if "Stream" in line and "Audio:" in line:
         self.audioNum = self.audioNum + 1
+      if "Stream" in line and "Video:" in line:
+        blocks = line.split()
+        self.videoEncode = blocks[3]
+        self.resolution = \
+          re.sub("\[[^\]]*\]","",\
+            re.sub("\([^\)]*\)","",line)).split(",")[2].split()[0]
       if "handler_name" in line and self.audioNum > 0:
         self.audioName.append(str(audioIndex) + ":" + line[line.index(" : ") + 3:])
         audioIndex = audioIndex + 1
     if [] == self.audioName:
       for audioIndex in range(self.audioNum):
         self.audioName.append(str(audioIndex) + ":" )
+
+  # Get Resolution
+  def GetResolution(self, file):
+    # [[[ 1. Check Filename ]]]
+    if file == self.file:
+      return self.resolution
+
+    # [[[ 2. Update Information ]]]
+    self.file = file
+    self.UpdateInfo()
+    return self.resolution
+
+  # Get VideoEncode
+  def GetVideoEncode(self, file):
+    # [[[ 1. Check Filename ]]]
+    if file == self.file:
+      return self.videoEncode
+
+    # [[[ 2. Update Information ]]]
+    self.file = file
+    self.UpdateInfo()
+    return self.videoEncode
 
   # Get Duration
   def GetDuration(self, file):
