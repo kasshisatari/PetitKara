@@ -93,7 +93,12 @@ def GetFileId(
   c.execute( \
     "SELECT FileId FROM File WHERE DirName = ? AND FileName = ?", \
     [dirName, filename])
-  fileId = c.fetchone()[0]
+  try:
+    fileId = c.fetchone()[0]
+  except:
+    fileId = None
+  finally:
+    conn.rollback()
 
   # [[[ 5. Unlock ]]]
   lock.release()
@@ -136,6 +141,7 @@ def Get(
     "SELECT DirName, FileName FROM File WHERE FileID = ?", \
     [fileId])
   row = c.fetchone()
+  conn.rollback()
   # [[[ 5. Unlock ]]]
   lock.release()
   return row[0],row[1]
