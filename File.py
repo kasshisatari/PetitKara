@@ -352,7 +352,9 @@ def Detail(
   if (None is videoInfo.GetDuration(filePath)):
     list = u"動画が見つかりません。" + "<br>" + u"曲情報を更新してください。"
   else:
-    list = list + videoInfo.GetDuration(filePath)
+    list = list + videoInfo.GetDuration(filePath) + "<br>"
+    list = list + videoInfo.GetVideoEncode(filePath) + "("
+    list = list + videoInfo.GetResolution(filePath) + ")"
     # [[ 5.1. History Count ]]
     list = list + "<br>" + str(History.Count(filePath)) + u"回"
 
