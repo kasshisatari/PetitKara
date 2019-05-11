@@ -19,7 +19,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="page" data-title="PetitKara">
     <div data-role="header"></div>
     <div role="main" class="ui-content">
-      <form method="GET" action="search" data-ajax="false">
+      <form method="GET" action="search" data-ajax="false" name="login" id="login">
         <div class="ui-field-contain">
           <label for="user">名前：</label>
           <input id="user" name="user" type="text" data-clear-btn="true" data-clear-btn-text="クリア" />
@@ -27,6 +27,14 @@ $.mobile.pushStateEnabled = false;
         <input id="keyword" name="keyword" type="hidden" value="" />
         <input type="submit" value="ログイン" />
       </form>
+<script>
+$("#login").submit(function(){
+  if ("" == $("input[name='user']").val())
+  {
+    alert("ログイン名が未入力となっています。\n匿名でログインします。");
+  }
+});
+</script>
     <a href="#initHistory" data-role="button" data-rel="dialog">履歴初期化</a>
     <a href="#refresh" data-role="button" data-rel="dialog">曲情報更新</a>
 {{!config}}
@@ -41,7 +49,7 @@ $.mobile.pushStateEnabled = false;
     PASS:{{!password}}
     </div>
     <div data-role="footer">
-      Version 1.4.7
+      Version 1.4.8
     </div>
   </div>
 
