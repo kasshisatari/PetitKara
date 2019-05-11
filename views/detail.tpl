@@ -81,6 +81,7 @@ $.mobile.pushStateEnabled = false;
   <div data-role="content">
 割り込み予約しますか。
     <form method="GET" action="insert" data-ajax="false">
+      コメント
       <input id="comment" name="comment" value="" type="text" />
       <input id="user" name="user" type="hidden" value="{{!name}}" />
       <input id="fileId" name="fileId" type="hidden" value="{{!id}}" />
