@@ -390,10 +390,25 @@ def config():
     rca += "</select>"
   else:
     rca = "<input id=\"port\" name=\"port\" type=\"hidden\" value=\"0\" />"
+  if True is network.GetUSBWifi():
+    ssid = network.GetUSBWifiSSID()
+    passwd = network.GetUSBWifiPassWD()
+    if None is ssid:
+      ssid = ""
+    if None is passwd:
+      passwd = ""
+    wifi = "<label for=\"usbssid\">USB SSID<br>要再起動</label>"
+    wifi += "<input id=\"usbssid\" name=\"usbssid\" type=\"text\" value=\"" + ssid + "\" />"
+    wifi += "<label for=\"usbpass\">USB Password<br>8文字未満は接続削除<br>要再起動</label>"
+    wifi += "<input id=\"usbpass\" name=\"usbpass\" type=\"text\" value=\"" + passwd + "\" maxlength=\"63\" />"
+  else:
+    wifi = "<input id=\"usbssid\" name=\"usbssid\" type=\"hidden\" value=\"\" />"
+    wifi += "<input id=\"usbpass\" name=\"usbpass\" type=\"hidden\" value=\"\" />"
   return template( \
     'config', \
     password = network.GetPassword(), \
-    rca = rca)
+    rca = rca, \
+    wifi = wifi)
 
 @app.get("/search")
 def search():
@@ -665,6 +680,11 @@ def setwifipass():
   else:
     # < RCA >
     video.SetCurrentAudioPort("RCA")
+  regexp = re.compile(r'^[\x20-\x7E]*$')
+  if len(request.query.usbpass) < 8 or None is regexp.search(request.query.usbpass):
+    network.SetUSBWifi(request.query.usbssid, "")
+  else:
+    network.SetUSBWifi(request.query.usbssid, request.query.usbpass)
   redirect("/")
 
 @app.get("/detail")
