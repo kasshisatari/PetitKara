@@ -34,7 +34,7 @@ class VideoInfo:
 
   # Update Information
   def UpdateInfo(self):
-    # [[[ 1. Call omxplayer -i ]]]
+    # [[[ 1. Call ffprobe ]]]
     ifconfig = subprocess.Popen(
       "Win" + os.path.sep + "ffprobe.exe \"" + self.file + "\"",
       stdout=subprocess.PIPE,
@@ -45,7 +45,7 @@ class VideoInfo:
     out, err = ifconfig.communicate()
     ifconfigLines = err.decode("ascii", "ignore").splitlines()
 
-    # [[[ 2. Parse omxplayer -i output ]]]
+    # [[[ 2. Parse ffprobe output ]]]
     self.duration = ""
     self.audioNum = 0
     self.audioName = []
