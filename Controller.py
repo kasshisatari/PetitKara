@@ -357,18 +357,23 @@ def volctrl():
 def static(path):
   return static_file(path, root='static')
 
-@app.get("/")
-def top():
-  ssid = network.GetSSID()
-  password = network.GetPassword()
+@app.get("/admin")
+def admin():
   configMenu = ""
   if 0 > system.GetHW().find("Win"):
     configMenu = "<a href=\"config\" data-role=\"button\" rel=\"external\">設定</a>"
   return template( \
+    'admin', \
+    config = configMenu)
+
+@app.get("/")
+def top():
+  ssid = network.GetSSID()
+  password = network.GetPassword()
+  return template( \
     'top', \
     ssid = ssid, \
-    password = password, \
-    config = configMenu)
+    password = password)
 
 @app.get("/config")
 def config():
