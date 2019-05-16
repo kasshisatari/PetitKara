@@ -707,7 +707,12 @@ vol = video.GetDefaultVolume()
 
 # [[[ 2. Make QR-Code ]]]
 img = qrcode.make("http://" + network.GetIP() + ":50000/")
-img.save("static/toppage.png")
+img.save("static/url.png")
+if len(network.GetPassword()) < 1:
+  img = qrcode.make("WIFI:T:nopass;S:" + network.GetSSID() + ";P:;;")
+else:
+  img = qrcode.make("WIFI:T:WPA;S:" + network.GetSSID() + ";P:" + network.GetPassword() + ";;") 
+img.save("static/ssid.png")
 
 # [[[ 3. Refresh File List ]]]
 File.init()
