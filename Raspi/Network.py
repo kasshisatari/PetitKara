@@ -57,7 +57,7 @@ class Network:
     hostapd = open("/etc/hostapd/hostapd.conf")
     for line in hostapd:
       if 0 == line.find("ssid="):
-        ssid = line[5:]
+        ssid = line[5:-1]
     hostapd.close()
     return ssid
 
@@ -70,7 +70,7 @@ class Network:
       if 0 == line.find("wpa=2"):
         valid = True
       elif 0 == line.find("wpa_passphrase="):
-        password = line[15:]
+        password = line[15:-1]
     hostapd.close()
     if False == valid:
       password = ""
