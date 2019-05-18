@@ -61,9 +61,27 @@ $.mobile.pushStateEnabled = false;
 </div>
 
 <div id="add" data-role="page">
+  <script>
+  var addCheckDup = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    if (true == json.dup)
+    {
+      $("#add_caption").text("重複しています。\n予約しますか。");
+    }
+  }
+  $("#add").on("pagebeforeshow", function(event) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", addCheckDup);
+    xhr.open("GET", "checkdup?fileId={{!id}}");
+    xhr.send();
+  });
+  </script>
   <div data-role="header"><h1>確認</h1></div>
   <div data-role="content">
-予約しますか。
+    <div id="add_caption">
+      予約しますか。
+    </div>
     <form method="GET" action="add" data-ajax="false">
       コメント
       <input id="comment" name="comment" value="" type="text" />
@@ -88,9 +106,27 @@ $.mobile.pushStateEnabled = false;
 </div>
 
 <div id="insertcheck" data-role="page">
+  <script>
+  var insertCheckDup = function()
+  {
+    var json = $.parseJSON(this.responseText);
+    if (true == json.dup)
+    {
+      $("#insertcheck_caption").text("重複しています。\n割り込み予約しますか。");
+    }
+  }
+  $("#insertcheck").on("pagebeforeshow", function(event) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", insertCheckDup);
+    xhr.open("GET", "checkdup?fileId={{!id}}");
+    xhr.send();
+  });
+  </script>
   <div data-role="header"><h1>確認</h1></div>
   <div data-role="content">
-割り込み予約しますか。
+    <div id="insertcheck_caption">
+      割り込み予約しますか。
+    </div>
     <form method="GET" action="insert" data-ajax="false">
       コメント
       <input id="comment" name="comment" value="" type="text" />
