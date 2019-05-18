@@ -687,6 +687,16 @@ def setwifipass():
     network.SetUSBWifi(request.query.usbssid, request.query.usbpass)
   redirect("/")
 
+@app.get("/checkdup")
+def checkdup():
+  directoryPath, fileName = File.Get(request.query.fileId)
+  if directoryPath[-1] is not os.path.sep:
+    directoryPath = directoryPath + os.path.sep
+  for book in Book.List():
+    if directoryPath + fileName == book[2]:
+      return "{\"dup\":true}"
+  return "{\"dup\":false}"
+
 @app.get("/detail")
 def detail():
   if (True is File.CheckFile(request.query.fileId)):
