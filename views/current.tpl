@@ -25,6 +25,7 @@ $.mobile.pushStateEnabled = false;
   <div role="main" class="ui-content">
     <p id="path"></p>
     <p id="duration"></p>
+    <progress id="posbar" value="0" max="0"></progress>
     <p id="vol"></p>
   </div>
   <div data-role="footer">
@@ -52,6 +53,8 @@ $.mobile.pushStateEnabled = false;
       hour = ('00' + String(Math.floor(json.pos / 3600))).slice(-2);
       min = ('00' + String(Math.floor((json.pos % 3600) / 60))).slice(-2);
       sec = ('00' + String(json.pos % 60)).slice(-2);
+      $('#posbar').prop("value", json.pos);
+      $('#posbar').prop("max", json.duration);
       $('#duration').text(hour + ":" + min + ":" + sec + "/" + duration);
       loadFlag = false;
       playFlag = true;
@@ -70,7 +73,11 @@ $.mobile.pushStateEnabled = false;
       hour = ('00' + String(Math.floor(json.pos / 3600))).slice(-2);
       min = ('00' + String(Math.floor((json.pos % 3600) / 60))).slice(-2);
       sec = ('00' + String(json.pos % 60)).slice(-2);
-      duration = json.duration;
+      duration = ('00' + String(Math.floor(json.duration / 3600))).slice(-2) + ":" +
+        ('00' + String(Math.floor((json.duration % 3600) / 60))).slice(-2)+ ":" + 
+        ('00' + String(json.duration % 60)).slice(-2);
+      $('#posbar').prop("value", json.pos);
+      $('#posbar').prop("max", json.duration);
       $('#path').text(json.path);
       $('#duration').text(hour + ":" + min + ":" + sec + "/" + duration);
       $('#text-user').text(json.user);
@@ -85,6 +92,8 @@ $.mobile.pushStateEnabled = false;
     {
       $('#path').text("再生中の動画はありません。");
       $('#duration').text("");
+      $('#posbar').prop("value", 0);
+      $('#posbar').prop("max", 0);
       $('#text-user').text("");
       $('#button-rew').hide();
       $('#button-ff').hide();
