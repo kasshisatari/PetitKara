@@ -58,7 +58,7 @@ def init(): # None
       "[User] TEXT, " +
       "[Comment] TEXT, " +
       "[Visible] BOOLEAN DEFAULT '1', " +
-      "[Duration] TEXT, " +
+      "[Duration] REAL, " +
       "[Audio] INTEGER NOT NULL, " +
       "[Dummy] BOOLEAN DEFAULT '0', " +
       "PRIMARY KEY(BookId));")
@@ -190,7 +190,7 @@ def AddLast(
     "\"" + user + "\"," +
     "\"" + comment + "\"," +
     str(int(visible)) + "," +
-    "\"" + duration + "\"," +
+    str(duration) + "," +
     str(audio) + ", " +
     str(int(dummy)) + ")")
 
@@ -382,14 +382,7 @@ def GetTotalReserveTime(): # Integer[sec]
 
   # [[[ 2. Sum Reserve Time with 10ms ]]]
   for row in List():
-    # [[ 2.1. Split Delimiter ]]
-    val = re.split('[:.]',row[6])
-    # [[ 2.2. Add Hour ]]
-    sec += int(val[0])*60*60
-    # [[ 2.3. Add Minute ]]
-    sec += int(val[1])*60
-    # [[ 2.4. Add Second ]]
-    sec += int(val[2]) + 10
+    sec += row[6] + 10
 
   # [[[ 4. Return Total Reserve Time ]]]
   return sec
@@ -412,7 +405,10 @@ def ReserveDetail(
       title = row[2]
     else:
       title = u"非公開"
-    list = row[3] + "<br>" + title + "<br>" + row[6] + "<br>" + row[4] + "<br>"
+    hour = str(int(row[6]/3600)).zfill(2)
+    minutes = str(int(row[6]%3600/60)).zfill(2)
+    seconds = str(int(row[6]%60)).zfill(2)
+    list = row[3] + "<br>" + title + "<br>" + hour + ":" + minutes + ":" + seconds + "<br>" + row[4] + "<br>"
 
   # [[[ 3. UnLock ]]]
   conn.rollback()

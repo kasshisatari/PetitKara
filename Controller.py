@@ -245,7 +245,7 @@ def currentinfo():
       "\"play\":true," + \
       "\"path\":\"" + path.replace("\\", "/") + "\"," + \
       "\"pos\":" + str(video.Position()) + "," + \
-      "\"duration\":\"" + duration + "\"," + \
+      "\"duration\":\"" + str(int(duration)) + "\"," + \
       "\"user\":\"" + user + "\"," + \
       "\"vol\":" + str(vol/100) + "," + \
       "\"pause\":" + pauseStr + "}"
