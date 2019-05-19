@@ -56,7 +56,8 @@ class VideoInfo:
       # [[ 2.1. Get Duration: ]]
       if "Duration:" in line:
         blocks = line.split()
-        self.duration = blocks[1][0:-1]
+        duration = blocks[1][0:-1].split(":")
+        self.duration = int(duration[0])*60*60 + int(duration[1])*60 + float(duration[2])
       if "Stream" in line and "Audio:" in line:
         self.audioNum = self.audioNum + 1
       if "Stream" in line and "Video:" in line:
