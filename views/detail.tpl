@@ -54,7 +54,7 @@ $.mobile.pushStateEnabled = false;
     var json = $.parseJSON(this.responseText);
     if (true == json.dup)
     {
-      $("#add_caption").text("重複しています。\n予約しますか。");
+      $("#add_caption").text("重複しています。予約しますか。");
     }
   }
   $("#add").on("pagebeforeshow",function(event){
@@ -101,7 +101,7 @@ $.mobile.pushStateEnabled = false;
     var json = $.parseJSON(this.responseText);
     if (true == json.dup)
     {
-      $("#insertcheck_caption").text("重複しています。\n割り込み予約しますか。");
+      $("#insertcheck_caption").text("重複しています。割り込み予約しますか。");
     }
   }
   $("#insertcheck").on("pagebeforeshow",function(event){
