@@ -252,6 +252,11 @@ def currentinfo():
       "\"vol\":" + str(vol/100) + "," + \
       "\"pause\":" + pauseStr + "}"
 
+# Book Push
+@app.get("/pushbook")
+def pushbook():
+  return Book.GetLatestBook()
+
 # Remote-Controller View
 @app.get("/current")
 def current():
