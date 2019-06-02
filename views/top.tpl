@@ -43,7 +43,7 @@ $("#login").submit(function(){
     <br>
     <img src="../static/ssid.png">
     <br>
-    http://192.168.9.1:50000/
+    http://{{!ip}}:50000/
     <br>
     <img src="../static/url.png">
     </div>

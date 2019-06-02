@@ -77,7 +77,7 @@ PASS:{{!password}}
 <font size="6">
 Second, go to the following URL.
 <br>
-http://192.168.9.1:50000/
+http://{{!ip}}:50000/
 </font>
 <br>
 <img src="static/url.png">
