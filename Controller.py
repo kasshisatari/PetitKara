@@ -95,10 +95,12 @@ lock = threading.Lock() # Lock Object
 def console():
   ssid = network.GetSSID()
   password = network.GetPassword()
+  ip = network.GetIP()
   return template( \
     'console', \
     ssid=ssid, \
-    password=password)
+    password=password, \
+    ip=ip)
 
 # Play Video
 @app.get("/play")
@@ -370,10 +372,12 @@ def admin():
 def top():
   ssid = network.GetSSID()
   password = network.GetPassword()
+  ip = network.GetIP()
   return template( \
     'top', \
     ssid = ssid, \
-    password = password)
+    password = password, \
+    ip = ip)
 
 @app.get("/config")
 def config():

@@ -29,12 +29,23 @@
 import threading
 import os
 import re
+import datetime
 fileName = "book.db"    # DB File Name
 maxRecord = 30          # Max Book Record
 BookId = None           # BookId
 conn = None             # SQLite Connection
 c = None                # SQLite Cursor
 lock = threading.Lock() # Lock Object
+bookValid = False       # Booking
+bookYear = None         # year of Booking
+bookMonth = None        # month of Booking
+bookDays = None         # day of Booking
+bookHour = None         # hour of Booking
+bookMinute = None       # minutes of Booking
+bookSecond = None       # second of Booking
+bookUser = None         # user of Booking
+bookComment = None      # comment of Booking
+bookSong = None         # song of Booking
 
 # Initialize DB
 def init(): # None
@@ -63,6 +74,44 @@ def init(): # None
       "[Dummy] BOOLEAN DEFAULT '0', " +
       "PRIMARY KEY(BookId));")
 
+# Get Latest Record
+def GetLatestBook(
+    ): # boolean valid, 
+       # integer year,
+       # integer month,
+       # integer day,
+       # integer hour,
+       # integer minute,
+       # integer second,
+       # string user,
+       # string comment,
+       # string song
+  global lock
+  latestRecord = ""
+
+  # [[[ 1. Lock ]]]
+  lock.acquire()
+
+  # [[[ 2. Make JSON ]]]
+  if False is bookValid:
+    latestRecord = "{\"valid\":false}"
+  else:
+    latestRecord = "{\"valid\":true,"
+    latestRecord += "\"year\":" + str(bookYear) + ","
+    latestRecord += "\"month\":" + str(bookMonth) + ","
+    latestRecord += "\"day\":" + str(bookDays) + ","
+    latestRecord += "\"hour\":" + str(bookHour) + ","
+    latestRecord += "\"minute\":" + str(bookMinute) + ","
+    latestRecord += "\"second\":" + str(bookSecond) + ","
+    latestRecord += "\"song\":\"" + os.path.basename(str(bookSong)) + "\","
+    latestRecord += "\"user\":\"" + str(bookUser) + "\","
+    latestRecord += "\"comment\":\"" + str(bookComment) + "\"}"
+
+  # [[[ 3. UnLock ]]]
+  lock.release()
+
+  return latestRecord
+
 # Add Top Record
 def AddTop(
       path,    # String (In): File Full Path
@@ -77,6 +126,16 @@ def AddTop(
   global c
   global BookId
   global lock
+  global bookValid
+  global bookYear 
+  global bookMonth
+  global bookDays
+  global bookHour
+  global bookMinute
+  global bookSecond
+  global bookUser
+  global bookComment
+  global bookSong
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
@@ -125,6 +184,17 @@ def AddTop(
     "\"" + duration + "\"," +
     str(audio) + "," +
     str(int(dummy)) + ")")
+  bookValid = True
+  now = datetime.datetime.now()
+  bookYear = now.year
+  bookMonth = now.month
+  bookDays = now.day
+  bookHour = now.hour
+  bookMinute = now.minute
+  bookSecond = now.second
+  bookSong = path
+  bookUser = user
+  bookComment = comment
 
   # [[[ 6. UnLock ]]]
   conn.commit()
@@ -148,6 +218,16 @@ def AddLast(
   global c
   global BookId
   global lock
+  global bookValid
+  global bookYear
+  global bookMonth
+  global bookDays
+  global bookHour
+  global bookMinute
+  global bookSecond
+  global bookUser
+  global bookComment
+  global bookSong
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
@@ -193,6 +273,17 @@ def AddLast(
     str(duration) + "," +
     str(audio) + ", " +
     str(int(dummy)) + ")")
+  bookValid = True
+  now = datetime.datetime.now()
+  bookYear = now.year
+  bookMonth = now.month
+  bookDays = now.day
+  bookHour = now.hour
+  bookMinute = now.minute
+  bookSecond = now.second
+  bookSong = path
+  bookUser = user
+  bookComment = comment
 
   # [[[ 5. UnLock ]]]
   conn.commit()
