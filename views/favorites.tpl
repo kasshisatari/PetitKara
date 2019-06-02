@@ -41,5 +41,70 @@ $.mobile.pushStateEnabled = false;
 </div>
 
 </body>
+<script>
+var bookYear = 0;
+var bookMonth = 0;
+var bookDay = 0;
+var bookHour = 0;
+var bookMinute = 0;
+var bookSecond = 0;
+var bookFlag = false;
+function closeAlert(msg,ms)
+{
+ var div = document.createElement("div");
+ div.setAttribute(
+   "style","position:fixed;top:10%;left:10%;right:10%;background-color:white;");
+ div.innerHTML = msg;
+ setTimeout(function(){
+  div.parentNode.removeChild(div);
+ },ms);
+ document.body.appendChild(div);
+}
+var pushListener = function()
+{
+  var json = $.parseJSON(this.responseText);
+  if (false == json.valid || false == bookFlag)
+  {
+    bookFlag = true;
+    if (true == json.valid)
+    {
+      bookYear = json.year;
+      bookMonth = json.month;
+      bookDay = json.day;
+      bookHour = json.hour;
+      bookMinute = json.minute;
+      bookSecond = json.second;
+    }
+    return;
+  }
+  if (
+    bookYear == json.year &&
+    bookMonth == json.month &&
+    bookDay == json.day &&
+    bookHour == json.hour &&
+    bookMinute  == json.minute &&
+    bookSecond == json.second)
+  {
+    return;
+  }
+  bookYear = json.year;
+  bookMonth = json.month;
+  bookDay = json.day;
+  bookHour = json.hour;
+  bookMinute = json.minute;
+  bookSecond = json.second;
+  closeAlert(json.user+"さんが"+json.song+"を予約しました。",3000);
+}
+var pushFunc = function()
+{
+  var pushXhr = new XMLHttpRequest();
+  pushXhr.addEventListener("load", pushListener);
+  pushXhr.open("GET", "pushbook");
+  pushXhr.send();
+}
+pushFunc();
+setInterval(pushFunc, 1000);
+</script>
+
 </html>
 
