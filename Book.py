@@ -103,9 +103,9 @@ def GetLatestBook(
     latestRecord += "\"hour\":" + str(bookHour) + ","
     latestRecord += "\"minute\":" + str(bookMinute) + ","
     latestRecord += "\"second\":" + str(bookSecond) + ","
-    latestRecord += "\"song\":\"" + os.path.basename(str(bookSong)) + "\","
-    latestRecord += "\"user\":\"" + str(bookUser) + "\","
-    latestRecord += "\"comment\":\"" + str(bookComment) + "\"}"
+    latestRecord += "\"song\":\"" + os.path.basename(bookSong) + "\","
+    latestRecord += "\"user\":\"" + bookUser + "\","
+    latestRecord += "\"comment\":\"" + bookComment + "\"}"
 
   # [[[ 3. UnLock ]]]
   lock.release()
