@@ -48,7 +48,7 @@ $("#login").submit(function(){
     <img src="../static/url.png">
     </div>
     <div data-role="footer">
-      Version 1.4.12
+      Version 1.4.13
     </div>
   </div>
 
@@ -131,7 +131,14 @@ var pushListener = function()
   bookHour = json.hour;
   bookMinute = json.minute;
   bookSecond = json.second;
-  closeAlert(json.user+"さんが"+json.song+"を予約しました。",3000);
+  if (true == json.visible)
+  {
+    closeAlert(json.user+"さんが"+json.song+"を予約しました。",3000);
+  }
+  else
+  {
+    closeAlert(json.user+"さんが予約しました。",3000);
+  }
 }
 var pushFunc = function()
 {
