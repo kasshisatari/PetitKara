@@ -181,7 +181,7 @@ def AddTop(
     "\"" + user + "\"," +
     "\"" + comment + "\"," +
     str(int(visible)) + "," +
-    "\"" + duration + "\"," +
+    "\"" + str(duration) + "\"," +
     str(audio) + "," +
     str(int(dummy)) + ")")
   bookValid = True
