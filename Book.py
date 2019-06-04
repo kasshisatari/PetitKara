@@ -46,6 +46,7 @@ bookSecond = None       # second of Booking
 bookUser = None         # user of Booking
 bookComment = None      # comment of Booking
 bookSong = None         # song of Booking
+bookVisible = None      # visible of Booking
 
 # Initialize DB
 def init(): # None
@@ -85,7 +86,8 @@ def GetLatestBook(
        # integer second,
        # string user,
        # string comment,
-       # string song
+       # string song,
+       # boolean visible
   global lock
   latestRecord = ""
 
@@ -105,7 +107,11 @@ def GetLatestBook(
     latestRecord += "\"second\":" + str(bookSecond) + ","
     latestRecord += "\"song\":\"" + os.path.basename(bookSong) + "\","
     latestRecord += "\"user\":\"" + bookUser + "\","
-    latestRecord += "\"comment\":\"" + bookComment + "\"}"
+    latestRecord += "\"comment\":\"" + bookComment + "\","
+    if True is bookVisible:
+      latestRecord += "\"visible\":true}"
+    else:
+      latestRecord += "\"visible\":false}"
 
   # [[[ 3. UnLock ]]]
   lock.release()
@@ -136,6 +142,7 @@ def AddTop(
   global bookUser
   global bookComment
   global bookSong
+  global bookVisible
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
@@ -193,6 +200,7 @@ def AddTop(
   bookMinute = now.minute
   bookSecond = now.second
   bookSong = path
+  bookVisible = visible
   bookUser = user
   bookComment = comment
 
@@ -227,6 +235,7 @@ def AddLast(
   global bookUser
   global bookComment
   global bookSong
+  global bookVisible
   # [[[ 1. Lock ]]]
   lock.acquire()
   c.execute("begin")
@@ -281,6 +290,7 @@ def AddLast(
   bookMinute = now.minute
   bookSecond = now.second
   bookSong = path
+  bookVisible = visible
   bookUser = user
   bookComment = comment
 
