@@ -36,6 +36,7 @@ from bottle import \
   response
 from paste import httpserver as web
 import qrcode
+import keyboard
 import Book
 import History
 import File
@@ -89,6 +90,30 @@ network = None          # network Instance
 hdmi = None             # hdmi instance
 system = None           # system Instance
 lock = threading.Lock() # Lock Object
+enter = False           # Enter-Key State
+
+def callback(event):
+  global enter
+  if event.event_type == keyboard.KEY_DOWN:
+    if 28 == event.scan_code or 96 == event.scan_code:
+      enter = True
+    return
+  if 28 == event.scan_code or 96 == event.scan_code:
+    enter = False
+  elif 80 == event.scan_code:
+    volctrl(-300)
+  elif 72 == event.scan_code:
+    volctrl(300)
+  elif 75 == event.scan_code:
+    posctrl(-5000)
+  elif 77 == event.scan_code:
+    posctrl(5000)
+  elif 76 == event.scan_code:
+    suspend()
+  elif 82 == event.scan_code and True == enter:
+    stop()
+  elif 83 == event.scan_code and True == enter:
+    audio()
 
 # Monitor View
 @app.get("/console")
@@ -273,13 +298,17 @@ def current():
     idx = request.query.idx)
 
 # Stop Video
-@app.get("/stop")
 def stop():
+  video.Stop()
+  duration = None
+
+# Stop Video
+@app.get("/stop")
+def stopurl():
   global duration
 
   # [[[ 1. Stop Video ]]]
-  video.Stop()
-  duration = None
+  stop()
 
   # [[[ 2. Redirect Previous View ]]]
   redirect( \
@@ -334,28 +363,38 @@ def audio():
   video.SwitchAudio()
 
 # Position Video
+def posctrl(offset):
+  if offset > 0:
+    video.FastForward()
+  else:
+    video.Rewind()
+
+# Position Video
 @app.get("/pos")
-def posctrl():
+def posctrlurl():
   # [[[ 1. Check Request ]]]
   if "" != request.query.offset:
     # < Change Position >
-    if int(request.query.offset) > 0:
-      video.FastForward()
-    else:
-      video.Rewind()
+    posctrl(int(request.query.offset))
+
+# Volume Control
+def volctrl(step):
+  global vol
+  # < Change Volume >
+  vol = vol + step
+  if step > 0:
+    video.UpVolume()
+  else:
+    video.DownVolume()
 
 # Volume Control
 @app.get("/vol/json")
-def volctrl():
+def volctrlurl():
   global vol
   # [[[ 1. Check Request ]]]
   if "" != request.query.step:
     # < Change Volume >
-    vol = vol + int(request.query.step)
-    if int(request.query.step) > 0:
-      video.UpVolume()
-    else:
-      video.DownVolume()
+    volctrl(int(request.query.step))
 
   # [[[ 2. Return JSON ]]]
   return "{\"vol\":" + str(vol/100) + "}"
@@ -764,6 +803,9 @@ File.init()
 # [[[ 4. Start Browser ]]]
 system.StartBrowser()
 
-# [[[ 5. Start Web Server ]]]
+# [[[ 5. Keyboard Hook ]]]
+keyboard.hook(callback)
+
+# [[[ 6. Start Web Server ]]]
 web.serve(app,host="0.0.0.0",port=50000)
 
