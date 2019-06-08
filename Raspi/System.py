@@ -62,7 +62,7 @@ class System:
     os.system("sudo shutdown -r now")
 
   def StartBrowser(self):
-    os.system("chromium-browser --noerrdialogs --kiosk --incognito --no-default-browser-check http://localhost:50000/console &")
+    os.system("chromium-browser --noerrdialogs --kiosk --incognito --no-default-browser-check http://localhost:50000/console --no-sandbox --test-type &")
 
   def GetDir(self):
     return [os.path.sep + 'media' + os.path.sep + 'pi' + os.path.sep]
