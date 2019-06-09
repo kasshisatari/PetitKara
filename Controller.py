@@ -804,7 +804,10 @@ File.init()
 system.StartBrowser()
 
 # [[[ 5. Keyboard Hook ]]]
-keyboard.hook(callback)
+try:
+  keyboard.hook(callback)
+except:
+  pass
 
 # [[[ 6. Start Web Server ]]]
 web.serve(app,host="0.0.0.0",port=50000)
