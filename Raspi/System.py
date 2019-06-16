@@ -65,6 +65,38 @@ class System:
     os.system("chromium-browser --noerrdialogs --kiosk --incognito --no-default-browser-check http://localhost:50000/console --no-sandbox --test-type &")
 
   def GetDir(self):
+    # [[[ 1. Wait USB Mass Storage ]]]
+    # [[ 1.1. dmesg ]]
+    dmesg = subprocess.Popen(
+      "dmesg | grep Mass | wc -l",
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE,
+      env={'LANG':'C'},
+      shell=True
+    )
+    dmesgOut, dmesgErr = dmesg.communicate()
+    dmesgLines = dmesgOut.decode("ascii", "ignore").splitlines()
+
+    # [[ 1.2. /media/pi ]]
+    usbMassNum = 0
+    for line in dmesgLines:
+      usbMassNum = int(line)
+    lsNum = 0
+    while lsNum != usbMassNum:
+      ls = subprocess.Popen(
+        "ls /media/pi | wc -l",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env={'LANG':'C'},
+        shell=True
+      )
+      lsOut, lsErr = ls.communicate()
+      lsLines = lsOut.decode("ascii", "ignore").splitlines()
+      for line in lsLines:
+        lsNum = int(line)
+      time.sleep(0.1)
+
+    # [[[ 2. Return /media/pi ]]]
     return [os.path.sep + 'media' + os.path.sep + 'pi' + os.path.sep]
 
   def GetHW(self):
