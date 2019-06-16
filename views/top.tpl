@@ -48,7 +48,7 @@ $("#login").submit(function(){
     <img src="../static/url.png">
     </div>
     <div data-role="footer">
-      Version 1.4.16
+      Version 1.4.17
     </div>
   </div>
 
