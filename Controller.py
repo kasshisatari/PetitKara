@@ -563,7 +563,7 @@ def insert():
       request.query.user, \
       "", \
       True, \
-      "00:00:00.00", \
+      "0", \
       1, \
       True)
   Book.AddTop( \
@@ -685,7 +685,7 @@ def add():
       request.query.user, \
       "", \
       True, \
-      "00:00:00.00", \
+      "0", \
       1, \
       True)
   redirect( \
@@ -701,7 +701,7 @@ def dummy():
     request.query.user, \
     "", \
     True, \
-    "00:00:00.00", \
+    "0", \
     1, \
     True)
   redirect( \
