@@ -25,8 +25,8 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 sudo ed /etc/hostapd/hostapd.conf << EOF
-%s/#wpa=./wpa=2/
-%s/#wpa_passphrase=.*/wpa_passphrase=$1/
+%s/#*wpa=./wpa=2/
+%s/#*wpa_passphrase=.*/wpa_passphrase=$1/
 %s/wpa_passphrase=.*/wpa_passphrase=$1/
 wq
 EOF
