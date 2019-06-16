@@ -26,6 +26,7 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import sys
 import os
 import re
 import datetime
@@ -780,35 +781,38 @@ def resetHistory():
   History.Reset()
   redirect("/")
 
-# [[[ 1. Initialize HDMI Signal Switcher ]]]
-hdmi = HDMI.HDMI()
-video = Video.Video()
-videoInfo = VideoInfo.VideoInfo()
-network = Network.Network()
-system = System.System()
-vol = video.GetDefaultVolume()
-
-# [[[ 2. Make QR-Code ]]]
-img = qrcode.make("http://" + network.GetIP() + ":50000/")
-img.save("static/url.png")
-if len(network.GetPassword()) < 1:
-  img = qrcode.make("WIFI:T:nopass;S:" + network.GetSSID() + ";P:;;")
-else:
-  img = qrcode.make("WIFI:T:WPA;S:" + network.GetSSID() + ";P:" + network.GetPassword() + ";;") 
-img.save("static/ssid.png")
-
-# [[[ 3. Refresh File List ]]]
-File.init()
-
-# [[[ 4. Start Browser ]]]
-system.StartBrowser()
-
-# [[[ 5. Keyboard Hook ]]]
 try:
-  keyboard.hook(callback)
+  # [[[ 1. Initialize HDMI Signal Switcher ]]]
+  hdmi = HDMI.HDMI()
+  video = Video.Video()
+  videoInfo = VideoInfo.VideoInfo()
+  network = Network.Network()
+  system = System.System()
+  vol = video.GetDefaultVolume()
+
+  # [[[ 2. Make QR-Code ]]]
+  img = qrcode.make("http://" + network.GetIP() + ":50000/")
+  img.save("static/url.png")
+  if len(network.GetPassword()) < 1:
+    img = qrcode.make("WIFI:T:nopass;S:" + network.GetSSID() + ";P:;;")
+  else:
+    img = qrcode.make("WIFI:T:WPA;S:" + network.GetSSID() + ";P:" + network.GetPassword() + ";;") 
+  img.save("static/ssid.png")
+
+  # [[[ 3. Refresh File List ]]]
+  File.init()
+
+  # [[[ 4. Start Browser ]]]
+  system.StartBrowser()
+
+  # [[[ 5. Keyboard Hook ]]]
+  try:
+    keyboard.hook(callback)
+  except:
+    pass
+
+  # [[[ 6. Start Web Server ]]]
+  web.serve(app,host="0.0.0.0",port=50000)
 except:
-  pass
-
-# [[[ 6. Start Web Server ]]]
-web.serve(app,host="0.0.0.0",port=50000)
-
+  sys.stderr.write(str(datetime.datetime.now())+"\n")
+  raise
