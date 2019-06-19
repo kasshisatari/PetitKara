@@ -31,6 +31,8 @@ import os
 import re
 import datetime
 import threading
+import urllib.request
+import zipfile
 from bottle import \
   Bottle, run, get, template, \
   request, route, static_file, redirect, \
@@ -779,6 +781,27 @@ def resetAll():
 @app.get("/initHistory")
 def resetHistory():
   History.Reset()
+  redirect("/")
+
+@app.get("/updatePetitKara")
+def updatePetitKara():
+  try:
+    if os.path.exists("PetitKara.zip"):
+      os.remove("PetitKara.zip")
+    req = urllib.request.Request('https://github.com/kasshisatari/petitkara/wiki')
+    with urllib.request.urlopen(req) as res:
+      body = res.read()
+
+    endUrl = str(body).find("PetitKara.zip")
+    startUrl = str(body).find("https://github.com/kasshisatari/PetitKara/releases/download")
+    url = str(body)[startUrl:endUrl+len("PetitKara.zip")]
+    urllib.request.urlretrieve(url, "PetitKara.zip")
+
+    with zipfile.ZipFile("PetitKara.zip") as existing_zip:
+      existing_zip.extractall()
+    system.UpdatePetitKara()
+  except:
+    pass
   redirect("/")
 
 try:

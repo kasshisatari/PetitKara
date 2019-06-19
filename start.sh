@@ -24,7 +24,6 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-sudo rm -fr /home/pi/.config/chromium/Singleton*
 cd /home/pi/Desktop/PetitKara
-sudo sh updateSSID.sh
-sudo python Controller.py >> stdout.log 2>> stderr.log &
+sudo sh Raspi/updateSSID.sh
+sudo python3 Controller.py >> stdout.log 2>> stderr.log &

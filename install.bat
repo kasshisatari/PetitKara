@@ -24,13 +24,13 @@ REM WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 REM ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 REM OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-cscript //nologo download.js
-python-3.7.3.exe /quiet
-%localappdata%\\Programs\\Python\\Python37-32\\python.exe -m pip install six-1.12.0-py2.py3-none-any.whl
-%localappdata%\\Programs\\Python\\Python37-32\\python.exe -m pip install sqlparse-0.3.0-py2.py3-none-any.whl
-%localappdata%\\Programs\\Python\\Python37-32\\python.exe -m pip install pytz-2019.1-py2.py3-none-any.whl
-%localappdata%\\Programs\\Python\\Python37-32\\python.exe -m pip install Django-2.2-py3-none-any.whl
-%localappdata%\\Programs\\Python\\Python37-32\\python.exe -m pip install Pillow-6.0.0-cp37-cp37m-win32.whl 
-%localappdata%\\Programs\\Python\\Python37-32\\python.exe -m pip install image-1.5.27-py2.py3-none-any.whl
-vlc-3.0.6-win32.exe /L=1041 /S
-copy ffmpeg-20190420-3a07aec-win32-static\bin\ffprobe.exe Win
+cscript //nologo Win\download.js
+Win\python-3.7.3.exe /quiet
+%localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\six-1.12.0-py2.py3-none-any.whl
+%localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\sqlparse-0.3.0-py2.py3-none-any.whl
+%localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\pytz-2019.1-py2.py3-none-any.whl
+%localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\Django-2.2-py3-none-any.whl
+%localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\Pillow-6.0.0-cp37-cp37m-win32.whl 
+%localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\image-1.5.27-py2.py3-none-any.whl
+Win\vlc-3.0.6-win32.exe /L=1041 /S
+copy Win\ffmpeg-20190420-3a07aec-win32-static\bin\ffprobe.exe Win
