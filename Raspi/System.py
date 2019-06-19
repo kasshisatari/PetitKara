@@ -101,3 +101,7 @@ class System:
 
   def GetHW(self):
     return self.hw
+
+  def UpdatePetitKara(self):
+    os.system("cp -fr PetitKara ..")
+    os.system("sh install.sh")
