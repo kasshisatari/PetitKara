@@ -58,3 +58,7 @@ class System:
 
   def GetHW(self):
     return "Win"
+
+  def UpdatePetitKara(self):
+    os.system("xcopy PetitKara . /e /y")
+    os.system("install.bat")
