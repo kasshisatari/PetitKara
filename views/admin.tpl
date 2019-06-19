@@ -28,9 +28,22 @@ $.mobile.pushStateEnabled = false;
       <a href="#shutdown" data-role="button" data-rel="dialog">シャットダウン</a>
       <a href="#restart" data-role="button" data-rel="dialog">再起動</a>
       <a href="#reset" data-role="button" data-rel="dialog">リセット</a>
+      <a href="#update" data-role="button" data-rel="dialog">オンライン更新</a>
    </div>
     <div data-role="footer">
     </div>
+  </div>
+
+  <div data-role="page" id="update">
+    <div data-role="header"><h1>確認</h1></div>
+    <div data-role="content">
+オンライン更新します。インターネットに接続していることを確認してください。更新後、再起動が必要です。また、ダイアログ操作に関し、マウスが必要な場合があります。失敗する場合はクリーンインストール願います。よろしいでしょうか。
+      <form>
+        <a data-role="button" href="updatePetitKara" rel="external">はい</a>
+	<a data-role="button" href="/" data-rel="back">いいえ</a>
+      </form>
+    </div>
+    <div data-role="footer"></div>
   </div>
 
   <div data-role="page" id="refresh">
