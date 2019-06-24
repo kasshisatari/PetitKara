@@ -23,7 +23,7 @@ $.mobile.pushStateEnabled = false;
 % import File 
 % count = File.Count(keyword)
     <a href="search?user={{!name}}&keyword={{!keyword}}" rel="external">戻る</a>
-    <h1>{{!keyword}}<br> {{!page}}ページ目 {{!count}}件</h1>
+    <h1>{{!keyword}}<br> {{!page}}ページ目<br>{{!count}}件</h1>
     <a href="current?user={{!name}}&back=list&keyword={{!keyword}}&page={{!page}}" rel="external">状態</a>
   </div>
 
