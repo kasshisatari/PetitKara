@@ -204,10 +204,10 @@ class Video:
 
   # Position
   def Position(self) : # [sec]
-    return self.properties_interface.Get(
+    return int(self.properties_interface.Get(
       self.player_interface.dbus_interface,
       "Position"
-    ) / 1000000
+    ) / 1000000)
 
   # Rewind
   def Rewind(self) : # None
