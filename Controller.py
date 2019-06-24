@@ -448,9 +448,9 @@ def config():
       ssid = ""
     if None is passwd:
       passwd = ""
-    wifi = "<label for=\"usbssid\">USB SSID<br>要再起動</label>"
+    wifi = "<label for=\"usbssid\">USB SSID</label>"
     wifi += "<input id=\"usbssid\" name=\"usbssid\" type=\"text\" value=\"" + ssid + "\" />"
-    wifi += "<label for=\"usbpass\">USB Password<br>8文字未満は接続削除<br>要再起動</label>"
+    wifi += "<label for=\"usbpass\">USB Password<br>8文字未満は接続削除</label>"
     wifi += "<input id=\"usbpass\" name=\"usbpass\" type=\"text\" value=\"" + passwd + "\" maxlength=\"63\" />"
   else:
     wifi = "<input id=\"usbssid\" name=\"usbssid\" type=\"hidden\" value=\"\" />"
