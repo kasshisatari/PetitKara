@@ -595,10 +595,7 @@ def resttime():
   sec = 0
   try:
     if True is video.CheckPlaying():
-      val = re.split('[:.]', duration)
-      sec += int(val[0])*60*60
-      sec += int(val[1])*60
-      sec += int(val[2])
+      sec = int(duration)
       sec -= video.Position()
   except:
     pass
