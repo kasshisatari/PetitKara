@@ -25,6 +25,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import subprocess
+import os
 
 class Network:
   # Get wlan0 ip address
@@ -134,3 +135,4 @@ class Network:
       subprocess.call("sh /home/pi/Desktop/PetitKara/Raspi/deleteNetwork.sh", shell=True)
     if len(ssid) > 0 and len(password) > 7:
       subprocess.call("sh /home/pi/Desktop/PetitKara/Raspi/addNetwork.sh " + ssid + " " + password, shell=True)
+      os.system("wpa_cli -i wlan1 reconfigure")
