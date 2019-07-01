@@ -26,8 +26,7 @@
 
 # [[[ 1. Install ]]]
 sudo apt-get update
-sudo apt-get install -y hostapd dnsmasq unclutter exfat-fuse exfat-utils
-sudo aptitude install -y ntfs-3g
+sudo apt-get install -y hostapd dnsmasq unclutter exfat-fuse exfat-utils ntfs-3g
 
 # [[[ 2. Config ]]]
 # [[ 2.1. wlan0 ]]
@@ -64,8 +63,7 @@ EOF
 
 # [[ 2.3. hostapd ]]
 cd /etc/hostapd/
-sudo cp /usr/share/doc/hostapd/examples/hostapd.conf.gz .
-sudo gzip -d -f hostapd.conf.gz
+sudo cp /usr/share/doc/hostapd/examples/hostapd.conf .
 cpuinfo=$(sum /proc/cpuinfo | cut -d ' ' -f1)
 sudo ed /etc/hostapd/hostapd.conf << EOF
 %s/ssid=test/ssid=PetitKara$cpuinfo/
