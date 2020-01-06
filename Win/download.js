@@ -61,26 +61,26 @@ if (!fileSystem.FileExists("Win/vlc-3.0.6-win32.exe"))
 }
 
 // [[[ 3. FFmpeg ]]]
-if (!fileSystem.FileExists("Win/ffmpeg-20190420-3a07aec-win32-static.zip"))
+if (!fileSystem.FileExists("Win/ffmpeg-latest-win32-static.zip"))
 {
   var http = new ActiveXObject("Microsoft.XMLHTTP");
   var stream = new ActiveXObject("ADODB.Stream");
-  http.open("GET", "https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-20190420-3a07aec-win32-static.zip", false);
+  http.open("GET", "https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.zip", false);
   http.send();
   stream.Type = 1;
   stream.Open();
   stream.Write(http.responseBody);
-  stream.SaveToFile("Win/ffmpeg-20190420-3a07aec-win32-static.zip", 2);
+  stream.SaveToFile("Win/ffmpeg-latest-win32-static.zip", 2);
   stream.Close();
   stream = null;
   http = null;
 }
 
-if (!fileSystem.FolderExists("Win/ffmpeg-20190420-3a07aec-win32-static"))
+if (!fileSystem.FolderExists("Win/ffmpeg-latest-win32-static"))
 {
   var shell = new ActiveXObject("Shell.Application");
   var path = shell.NameSpace(fileSystem.GetFile(WScript.ScriptFullName).ParentFolder.Path);
-  var file = shell.NameSpace(fileSystem.GetFile(WScript.ScriptFullName).ParentFolder.Path + "\\ffmpeg-20190420-3a07aec-win32-static.zip");
+  var file = shell.NameSpace(fileSystem.GetFile(WScript.ScriptFullName).ParentFolder.Path + "\\ffmpeg-latest-win32-static.zip");
   path.CopyHere(file.items());
 }
 
