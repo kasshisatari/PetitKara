@@ -33,4 +33,4 @@ Win\python-3.7.3.exe /quiet
 %localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\Pillow-6.0.0-cp37-cp37m-win32.whl 
 %localappdata%\Programs\Python\Python37-32\python.exe -m pip install Win\image-1.5.27-py2.py3-none-any.whl
 Win\vlc-3.0.6-win32.exe /L=1041 /S
-copy Win\ffmpeg-20190420-3a07aec-win32-static\bin\ffprobe.exe Win
+copy Win\ffmpeg-latest-win32-static\bin\ffprobe.exe Win
