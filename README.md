@@ -6,4 +6,4 @@ PetitKara
 
 https://github.com/kasshisatari/PetitKara/wiki
 
- 2019/10/19より新持ち込みカラオケシステム(名称検討中)開発のため、PetitKaraは開発を終了しました。
+ 2019/10/19より新持ち込みカラオケシステム「Kanade」(https://github.com/kasshisatari/Kanade/wiki) 開発のため、PetitKaraは開発を終了しました。
